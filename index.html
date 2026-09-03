@@ -2,7 +2,11 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Kenier Barber Studio</title>
 
@@ -13,235 +17,403 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
+      padding: 20px 15px 40px;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f5f5;
+      color: #111;
     }
 
     .container {
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 25px 18px 40px;
+      max-width: 760px;
+      margin: auto;
     }
 
-    .logo {
+    h1 {
       text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .logo h1 {
-      margin: 0;
-      font-size: 30px;
-      letter-spacing: 1px;
-    }
-
-    .logo p {
-      margin: 6px 0 25px;
-      color: #aaa;
-      font-size: 14px;
+      font-size: 42px;
+      margin: 15px 0 40px;
+      font-weight: 800;
     }
 
     .card {
-      background: #1c1c1c;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 18px;
+      background: white;
+      border-radius: 25px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      font-size: 25px;
+      margin-top: 0;
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin-bottom: 8px;
-      font-size: 14px;
-      color: #ddd;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
     }
 
     input {
       width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      background: #292929;
-      color: white;
-      font-size: 16px;
-      margin-bottom: 18px;
-      outline: none;
+      padding: 18px;
+      border: 2px solid #ddd;
+      border-radius: 15px;
+      font-size: 18px;
+      margin-bottom: 25px;
+      background: white;
     }
 
-    input:focus {
-      background: #333;
+    .services {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .service-option {
+      position: relative;
+    }
+
+    .service-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .service-label {
+      display: block;
+      border: 2px solid #ddd;
+      border-radius: 18px;
+      padding: 18px;
+      cursor: pointer;
+      transition: 0.15s;
+      background: white;
+    }
+
+    .service-label strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .service-label span {
+      display: block;
+      font-size: 16px;
+      color: #555;
+    }
+
+    .service-option input:checked + .service-label {
+      border-color: #111;
+      background: #111;
+      color: white;
+    }
+
+    .service-option input:checked + .service-label span {
+      color: #ddd;
+    }
+
+    .service-note {
+      font-size: 15px;
+      color: #555;
+      margin-top: -15px;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .button {
+      width: 100%;
+      border: none;
+      background: #111;
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .times {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 10px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
 
-    .time-btn {
-      padding: 13px 5px;
-      border: none;
-      border-radius: 10px;
-      background: #333;
+    .time-button {
+      padding: 18px 10px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 15px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .time-button:hover {
+      border-color: #111;
+    }
+
+    .time-button.selected {
+      background: #111;
       color: white;
-      font-size: 15px;
-      cursor: pointer;
+      border-color: #111;
     }
 
-    .time-btn:hover {
-      background: #444;
-    }
-
-    .time-btn.selected {
-      background: white;
-      color: black;
-      font-weight: bold;
-    }
-
-    .time-btn.booked {
-      background: #555;
+    .time-button.booked {
+      background: #e5e5e5;
       color: #999;
-      cursor: not-allowed;
+      border-color: #ddd;
       text-decoration: line-through;
-    }
-
-    .reserve-btn {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 10px;
-      background: white;
-      color: black;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .reserve-btn:hover {
-      background: #ddd;
-    }
-
-    .reserve-btn:disabled {
-      background: #555;
-      color: #999;
       cursor: not-allowed;
+    }
+
+    .form-row {
+      margin-bottom: 20px;
     }
 
     .message {
       display: none;
-      padding: 14px;
-      border-radius: 10px;
-      margin-top: 15px;
-      text-align: center;
-      font-size: 14px;
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 20px;
+      font-size: 18px;
+      line-height: 1.5;
     }
 
     .success {
-      background: #173b24;
-      color: #8ff0a4;
+      display: block;
+      background: #e8f7e8;
+      color: #176b17;
+      border: 1px solid #9ad39a;
     }
 
     .error {
-      background: #3b1717;
-      color: #ff9b9b;
+      display: block;
+      background: #ffe8e8;
+      color: #a40000;
+      border: 1px solid #e0a0a0;
+    }
+
+    .selected-info {
+      display: none;
+      background: #f1f1f1;
+      border-radius: 15px;
+      padding: 18px;
+      margin-top: 20px;
+      font-size: 17px;
+      line-height: 1.6;
     }
 
     .loading {
       text-align: center;
-      color: #aaa;
-      font-size: 14px;
-      margin-top: 10px;
+      font-size: 18px;
+      color: #666;
+      padding: 20px;
     }
 
-    .footer {
-      text-align: center;
-      color: #777;
-      font-size: 12px;
-      margin-top: 25px;
+    @media (max-width: 600px) {
+      body {
+        padding: 15px 10px 30px;
+      }
+
+      h1 {
+        font-size: 32px;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        padding: 22px;
+        border-radius: 22px;
+      }
+
+      .times {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <div class="logo">
-      <h1>KENIER BARBER STUDIO</h1>
-      <p>Reserva tu cita</p>
-    </div>
+  <h1>Kenier Barber Studio</h1>
 
-    <div class="card">
+  <!-- SERVICIOS -->
+  <div class="card">
 
-      <label for="date">Selecciona la fecha</label>
+    <h2>Selecciona tu servicio</h2>
 
-      <input type="date" id="date">
+    <div class="services">
 
-      <label>Selecciona el horario</label>
+      <div class="service-option">
+        <input
+          type="radio"
+          name="service"
+          id="style"
+          value="Pelado con estilo — $500 pesos"
+        >
 
-      <div id="loading" class="loading">
-        Cargando horarios disponibles...
+        <label
+          for="style"
+          class="service-label"
+        >
+          <strong>💈 Pelado con estilo — $500</strong>
+          <span>Servicio completo</span>
+        </label>
       </div>
 
-      <div id="times" class="times"></div>
+      <div class="service-option">
+        <input
+          type="radio"
+          name="service"
+          id="classic"
+          value="Pelado clásico o al cero — $300 pesos"
+        >
+
+        <label
+          for="classic"
+          class="service-label"
+        >
+          <strong>✂️ Pelado clásico o al cero — $300</strong>
+          <span>Personas mayores</span>
+        </label>
+      </div>
+
+      <div class="service-option">
+        <input
+          type="radio"
+          name="service"
+          id="kids"
+          value="Pelado para niños — $300 pesos"
+        >
+
+        <label
+          for="kids"
+          class="service-label"
+        >
+          <strong>👦 Pelado para niños — $300</strong>
+          <span>Menores de 12 años</span>
+        </label>
+      </div>
 
     </div>
 
-    <div class="card">
-
-      <label for="name">Tu nombre</label>
-
-      <input
-        type="text"
-        id="name"
-        placeholder="Escribe tu nombre"
-        autocomplete="name"
-      >
-
-      <label for="phone">Número de teléfono</label>
-
-      <input
-        type="tel"
-        id="phone"
-        placeholder="Escribe tu número"
-        autocomplete="tel"
-      >
-
-      <button
-        id="reserveBtn"
-        class="reserve-btn"
-        onclick="reserveAppointment()"
-      >
-        Reservar cita
-      </button>
-
-      <div id="message" class="message"></div>
-
-    </div>
-
-    <div class="footer">
-      Kenier Barber Studio · 8:00 AM – 7:00 PM
+    <div class="service-note">
+      Todos los servicios incluyen arreglo de barba y cejas.
     </div>
 
   </div>
 
 
+  <!-- FECHA -->
+  <div class="card">
+
+    <h2>Seleccionar fecha</h2>
+
+    <input
+      type="date"
+      id="date"
+    >
+
+    <button
+      class="button"
+      id="loadButton"
+      type="button"
+    >
+      Ver horarios disponibles
+    </button>
+
+  </div>
+
+
+  <!-- HORARIOS -->
+  <div
+    class="card"
+    id="scheduleCard"
+    style="display:none;"
+  >
+
+    <h2>Seleccionar horario</h2>
+
+    <div
+      id="times"
+      class="times"
+    ></div>
+
+  </div>
+
+
+  <!-- DATOS -->
+  <div
+    class="card"
+    id="bookingCard"
+    style="display:none;"
+  >
+
+    <h2>Datos de la cita</h2>
+
+    <div class="form-row">
+      <label for="name">
+        Nombre
+      </label>
+
+      <input
+        type="text"
+        id="name"
+        placeholder="Tu nombre"
+        autocomplete="name"
+      >
+    </div>
+
+    <div class="form-row">
+      <label for="phone">
+        Teléfono
+      </label>
+
+      <input
+        type="tel"
+        id="phone"
+        placeholder="Tu teléfono"
+        autocomplete="tel"
+      >
+    </div>
+
+    <div
+      id="selectedInfo"
+      class="selected-info"
+    ></div>
+
+    <button
+      class="button"
+      id="bookButton"
+      type="button"
+    >
+      Confirmar cita
+    </button>
+
+    <div
+      id="message"
+      class="message"
+    ></div>
+
+  </div>
+
+</div>
+
+
 <script>
 
-  /*
-    BACKEND DE CLOUDFLARE
-  */
   const API_URL =
     "https://kenier-barber-studio.pages.dev/api/appointments";
 
-
-  /*
-    HORARIOS DISPONIBLES
-
-    8:00 AM hasta 6:00 PM
-    Cada cita dura 1 hora
-  */
   const times = [
     "08:00",
     "09:00",
@@ -256,160 +428,180 @@
     "18:00"
   ];
 
-
-  let selectedTime = null;
-
-
   const dateInput =
     document.getElementById("date");
+
+  const loadButton =
+    document.getElementById("loadButton");
+
+  const scheduleCard =
+    document.getElementById("scheduleCard");
 
   const timesContainer =
     document.getElementById("times");
 
-  const loading =
-    document.getElementById("loading");
+  const bookingCard =
+    document.getElementById("bookingCard");
 
-  const reserveBtn =
-    document.getElementById("reserveBtn");
+  const nameInput =
+    document.getElementById("name");
+
+  const phoneInput =
+    document.getElementById("phone");
+
+  const bookButton =
+    document.getElementById("bookButton");
 
   const message =
     document.getElementById("message");
 
+  const selectedInfo =
+    document.getElementById("selectedInfo");
 
-  /*
-    OBTENER LA FECHA DE HOY
-  */
-  function getToday() {
 
-    const today = new Date();
+  let selectedTime = null;
 
-    const year =
-      today.getFullYear();
 
-    const month =
-      String(today.getMonth() + 1)
-        .padStart(2, "0");
+  // Fecha mínima = hoy
+  const today =
+    new Date().toISOString().split("T")[0];
 
-    const day =
-      String(today.getDate())
-        .padStart(2, "0");
+  dateInput.min = today;
 
-    return `${year}-${month}-${day}`;
 
+  // Formato de hora
+  function formatTime(time) {
+
+    const [hour, minute] =
+      time.split(":");
+
+    let h = parseInt(hour);
+
+    const ampm =
+      h >= 12 ? "PM" : "AM";
+
+    h = h % 12;
+
+    if (h === 0) {
+      h = 12;
+    }
+
+    return `${h}:${minute} ${ampm}`;
   }
 
 
-  /*
-    MOSTRAR MENSAJE
-  */
-  function showMessage(text, type) {
+  // Servicio seleccionado
+  function getSelectedService() {
 
-    message.textContent = text;
+    const selected =
+      document.querySelector(
+        'input[name="service"]:checked'
+      );
 
-    message.className =
-      "message " + type;
-
-    message.style.display = "block";
-
+    return selected
+      ? selected.value
+      : null;
   }
 
 
-  /*
-    OCULTAR MENSAJE
-  */
-  function hideMessage() {
+  // Mostrar información seleccionada
+  function updateSelectedInfo() {
 
-    message.style.display = "none";
+    const service =
+      getSelectedService();
 
+    if (!service || !selectedTime) {
+      selectedInfo.style.display = "none";
+      return;
+    }
+
+    selectedInfo.innerHTML = `
+      <strong>Servicio:</strong> ${service}<br>
+      <strong>Horario:</strong> ${formatTime(selectedTime)}
+    `;
+
+    selectedInfo.style.display = "block";
   }
 
 
-  /*
-    CARGAR LAS CITAS DESDE CLOUDFLARE
-  */
+  document
+    .querySelectorAll('input[name="service"]')
+    .forEach(input => {
+
+      input.addEventListener(
+        "change",
+        updateSelectedInfo
+      );
+
+    });
+
+
+  // Cargar horarios
   async function loadAppointments() {
 
     const date =
       dateInput.value;
 
     if (!date) {
+      alert("Selecciona una fecha.");
       return;
     }
 
+    timesContainer.innerHTML =
+      `<div class="loading">
+        Cargando horarios...
+      </div>`;
+
+    scheduleCard.style.display =
+      "block";
+
+    bookingCard.style.display =
+      "none";
+
     selectedTime = null;
-
-    reserveBtn.disabled = false;
-
-    hideMessage();
-
-    loading.style.display = "block";
-
-    timesContainer.innerHTML = "";
-
 
     try {
 
-      const response = await fetch(
-        `${API_URL}?date=${encodeURIComponent(date)}`
-      );
-
-
-      /*
-        LEEMOS LA RESPUESTA COMO TEXTO
-        ANTES DE CONVERTIRLA A JSON.
-
-        Esto evita el problema de Safari:
-        "The string did not match the expected pattern"
-      */
+      const response =
+        await fetch(
+          `${API_URL}?date=${encodeURIComponent(date)}`,
+          {
+            method: "GET",
+            mode: "cors",
+            cache: "no-store"
+          }
+        );
 
       const raw =
         await response.text();
 
-      let data = {};
+      let data;
 
       try {
-
-        data =
-          raw
-            ? JSON.parse(raw)
-            : {};
-
-      } catch (parseError) {
-
+        data = JSON.parse(raw);
+      } catch {
         throw new Error(
-          `Respuesta del servidor (${response.status}): ${raw.slice(0, 200)}`
+          "Respuesta inválida del servidor."
         );
-
       }
-
 
       if (!response.ok) {
-
         throw new Error(
           data.error ||
-          `Error del servidor (${response.status})`
+          "No se pudieron cargar las citas."
         );
-
       }
 
-
-      const appointments =
-        data.appointments || [];
-
-
-      /*
-        OBTENER LOS HORARIOS OCUPADOS
-      */
       const bookedTimes =
-        appointments.map(
-          appointment =>
-            appointment.appointment_time
+        new Set(
+          data.map(
+            appointment =>
+              appointment.appointment_time
+          )
         );
 
+      timesContainer.innerHTML = "";
 
-      /*
-        CREAR LOS BOTONES DE HORARIOS
-      */
       times.forEach(time => {
 
         const button =
@@ -418,378 +610,352 @@
         button.type = "button";
 
         button.className =
-          "time-btn";
+          "time-button";
 
         button.textContent =
           formatTime(time);
 
-
-        /*
-          COMPROBAR SI EL HORARIO ESTÁ OCUPADO
-        */
-        if (bookedTimes.includes(time)) {
+        if (bookedTimes.has(time)) {
 
           button.classList.add("booked");
 
           button.disabled = true;
 
-          button.textContent =
-            formatTime(time) +
-            " · Ocupado";
-
         } else {
 
           button.addEventListener(
             "click",
-            () => selectTime(time, button)
+            () => {
+
+              document
+                .querySelectorAll(
+                  ".time-button"
+                )
+                .forEach(btn =>
+                  btn.classList.remove(
+                    "selected"
+                  )
+                );
+
+              button.classList.add(
+                "selected"
+              );
+
+              selectedTime = time;
+
+              bookingCard.style.display =
+                "block";
+
+              message.style.display =
+                "none";
+
+              updateSelectedInfo();
+
+              bookingCard.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+              });
+
+            }
           );
 
         }
-
 
         timesContainer.appendChild(button);
 
       });
 
-
     } catch (error) {
 
-      console.error(
-        "Error cargando citas:",
-        error
-      );
-
-      showMessage(
-        "❌ No se pudieron cargar los horarios. " +
-        error.message,
-        "error"
-      );
-
-    } finally {
-
-      loading.style.display = "none";
+      timesContainer.innerHTML = `
+        <div class="message error">
+          ❌ ${error.message}
+        </div>
+      `;
 
     }
 
   }
 
 
-  /*
-    SELECCIONAR HORARIO
-  */
-  function selectTime(time, button) {
+  loadButton.addEventListener(
+    "click",
+    loadAppointments
+  );
 
-    selectedTime = time;
 
+  // Confirmar cita
+  bookButton.addEventListener(
+    "click",
+    async () => {
 
-    /*
-      QUITAR SELECCIÓN ANTERIOR
-    */
-    document
-      .querySelectorAll(".time-btn")
-      .forEach(btn => {
+      const service =
+        getSelectedService();
 
-        btn.classList.remove("selected");
+      const date =
+        dateInput.value;
 
-      });
+      const name =
+        nameInput.value.trim();
 
+      const phone =
+        phoneInput.value.trim();
 
-    /*
-      MARCAR EL HORARIO SELECCIONADO
-    */
-    button.classList.add("selected");
 
+      if (!service) {
 
-    hideMessage();
-
-  }
-
-
-  /*
-    CONVERTIR 24 HORAS A 12 HORAS
-  */
-  function formatTime(time) {
-
-    const parts =
-      time.split(":");
-
-    let hour =
-      parseInt(parts[0], 10);
-
-    const minute =
-      parts[1];
-
-    const ampm =
-      hour >= 12 ? "PM" : "AM";
-
-
-    hour =
-      hour % 12 || 12;
-
-
-    return `${hour}:${minute} ${ampm}`;
-
-  }
-
-
-  /*
-    RESERVAR CITA
-  */
-  async function reserveAppointment() {
-
-    hideMessage();
-
-
-    const date =
-      dateInput.value;
-
-    const name =
-      document
-        .getElementById("name")
-        .value
-        .trim();
-
-    const phone =
-      document
-        .getElementById("phone")
-        .value
-        .trim();
-
-
-    /*
-      VALIDACIONES
-    */
-
-    if (!date) {
-
-      showMessage(
-        "❌ Selecciona una fecha.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    if (!selectedTime) {
-
-      showMessage(
-        "❌ Selecciona un horario.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    if (!name) {
-
-      showMessage(
-        "❌ Escribe tu nombre.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    if (!phone) {
-
-      showMessage(
-        "❌ Escribe tu número de teléfono.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    /*
-      EVITAR DOBLE CLIC
-    */
-    reserveBtn.disabled = true;
-
-    reserveBtn.textContent =
-      "Reservando...";
-
-
-    try {
-
-
-      /*
-        USAMOS text/plain PARA EVITAR
-        EL PREFLIGHT DE CORS EN SAFARI.
-
-        CLOUDFLARE SIGUE RECIBIENDO
-        EL BODY COMO JSON.
-      */
-
-      const response =
-        await fetch(API_URL, {
-
-          method: "POST",
-
-          headers: {
-
-            "Content-Type":
-              "text/plain;charset=UTF-8"
-
-          },
-
-          body: JSON.stringify({
-
-            date: date,
-
-            time: selectedTime,
-
-            name: name,
-
-            phone: phone
-
-          })
-
-        });
-
-
-      /*
-        LEER RESPUESTA COMO TEXTO
-      */
-      const raw =
-        await response.text();
-
-
-      /*
-        CONVERTIR RESPUESTA A JSON
-      */
-      let data = {};
-
-      try {
-
-        data =
-          raw
-            ? JSON.parse(raw)
-            : {};
-
-      } catch (parseError) {
-
-        throw new Error(
-          `Respuesta del servidor (${response.status}): ${raw.slice(0, 300)}`
+        showMessage(
+          "❌ Selecciona el servicio que deseas.",
+          false
         );
 
+        return;
       }
 
 
-      /*
-        ERROR DEL SERVIDOR
-      */
-      if (!response.ok) {
+      if (!date) {
 
-        if (response.status === 409) {
+        showMessage(
+          "❌ Selecciona una fecha.",
+          false
+        );
+
+        return;
+      }
+
+
+      if (!selectedTime) {
+
+        showMessage(
+          "❌ Selecciona un horario.",
+          false
+        );
+
+        return;
+      }
+
+
+      if (!name) {
+
+        showMessage(
+          "❌ Escribe tu nombre.",
+          false
+        );
+
+        nameInput.focus();
+
+        return;
+      }
+
+
+      if (!phone) {
+
+        showMessage(
+          "❌ Escribe tu teléfono.",
+          false
+        );
+
+        phoneInput.focus();
+
+        return;
+      }
+
+
+      bookButton.disabled = true;
+
+      bookButton.textContent =
+        "Reservando...";
+
+      message.style.display =
+        "none";
+
+
+      try {
+
+        const response =
+          await fetch(
+            API_URL,
+            {
+              method: "POST",
+              mode: "cors",
+              headers: {
+                "Content-Type":
+                  "text/plain;charset=UTF-8"
+              },
+              body: JSON.stringify({
+                date: date,
+                time: selectedTime,
+                name: name,
+                phone: phone,
+                service: service
+              })
+            }
+          );
+
+
+        const raw =
+          await response.text();
+
+        let data;
+
+        try {
+          data = JSON.parse(raw);
+        } catch {
+          throw new Error(
+            "Respuesta inválida del servidor."
+          );
+        }
+
+
+        if (!response.ok) {
 
           throw new Error(
-            "Ese horario acaba de ser reservado por otra persona. Selecciona otro horario."
+            data.error ||
+            "No se pudo reservar la cita."
           );
 
         }
 
 
-        throw new Error(
-          data.error ||
-          `Error del servidor (${response.status})`
+        // MENSAJE DE CONFIRMACIÓN
+        message.className =
+          "message success";
+
+        message.innerHTML = `
+          <strong>✅ ¡Cita confirmada!</strong><br><br>
+
+          Tu cita ha sido reservada correctamente.<br><br>
+
+          <strong>Servicio:</strong><br>
+          ${service}<br><br>
+
+          <strong>Fecha:</strong><br>
+          ${formatDate(date)}<br><br>
+
+          <strong>Horario:</strong><br>
+          ${formatTime(selectedTime)}<br><br>
+
+          <strong>Cliente:</strong><br>
+          ${escapeHtml(name)}<br><br>
+
+          <strong>Teléfono:</strong><br>
+          ${escapeHtml(phone)}
+        `;
+
+        message.style.display =
+          "block";
+
+
+        // Limpiar selección
+        selectedTime = null;
+
+        nameInput.value = "";
+        phoneInput.value = "";
+
+        selectedInfo.style.display =
+          "none";
+
+
+        // Recargar horarios
+        setTimeout(
+          loadAppointments,
+          500
         );
+
+
+        message.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+
+
+      } catch (error) {
+
+        showMessage(
+          `❌ ${error.message}`,
+          false
+        );
+
+      } finally {
+
+        bookButton.disabled = false;
+
+        bookButton.textContent =
+          "Confirmar cita";
 
       }
 
-
-      /*
-        RESERVA EXITOSA
-      */
-      showMessage(
-        "✅ ¡Cita reservada correctamente!",
-        "success"
-      );
-
-
-      /*
-        LIMPIAR FORMULARIO
-      */
-      document.getElementById("name").value = "";
-
-      document.getElementById("phone").value = "";
-
-
-      /*
-        QUITAR HORARIO SELECCIONADO
-      */
-      selectedTime = null;
-
-
-      /*
-        RECARGAR HORARIOS
-
-        La hora recién reservada aparecerá
-        inmediatamente como ocupada.
-      */
-      await loadAppointments();
-
-
-    } catch (error) {
-
-      console.error(
-        "Error reservando cita:",
-        error
-      );
-
-
-      showMessage(
-        "❌ " + error.message,
-        "error"
-      );
-
-
-    } finally {
-
-      reserveBtn.disabled = false;
-
-      reserveBtn.textContent =
-        "Reservar cita";
-
     }
+  );
+
+
+  function showMessage(
+    text,
+    success
+  ) {
+
+    message.className =
+      success
+        ? "message success"
+        : "message error";
+
+    message.innerHTML = text;
+
+    message.style.display =
+      "block";
 
   }
 
 
-  /*
-    CUANDO CAMBIA LA FECHA
-  */
-  dateInput.addEventListener(
-    "change",
-    loadAppointments
-  );
+  function formatDate(date) {
+
+    const parts =
+      date.split("-");
+
+    if (parts.length !== 3) {
+      return date;
+    }
+
+    const year =
+      parts[0];
+
+    const month =
+      parseInt(parts[1], 10);
+
+    const day =
+      parseInt(parts[2], 10);
+
+    const months = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre"
+    ];
+
+    return `${day} de ${months[month - 1]} de ${year}`;
+
+  }
 
 
-  /*
-    PONER HOY COMO FECHA INICIAL
-  */
-  dateInput.value =
-    getToday();
+  function escapeHtml(text) {
 
+    const div =
+      document.createElement("div");
 
-  /*
-    NO PERMITIR FECHAS PASADAS
-  */
-  dateInput.min =
-    getToday();
+    div.textContent =
+      text;
 
+    return div.innerHTML;
 
-  /*
-    CARGAR LOS HORARIOS DE HOY
-  */
-  loadAppointments();
+  }
 
 </script>
 
