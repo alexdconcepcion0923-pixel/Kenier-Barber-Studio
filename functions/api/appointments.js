@@ -1,6 +1,8 @@
 export async function onRequestGet(context) {
-  const { request, env } = context;
-  const url = new URL(request.url);
+  const { env } = context;
+  const db = env["kenier-barber-db"];
+
+  const url = new URL(context.request.url);
   const date = url.searchParams.get("date");
 
   if (!date) {
@@ -10,7 +12,7 @@ export async function onRequestGet(context) {
     );
   }
 
-  const result = await env.DB
+  const result = await db
     .prepare(
       "SELECT appointment_time FROM appointments WHERE appointment_date = ? AND status = 'confirmed' ORDER BY appointment_time"
     )
@@ -24,6 +26,7 @@ export async function onRequestGet(context) {
 
 export async function onRequestPost(context) {
   const { request, env } = context;
+  const db = env["kenier-barber-db"];
 
   try {
     const data = await request.json();
@@ -37,40 +40,32 @@ export async function onRequestPost(context) {
       );
     }
 
-    try {
-      await env.DB
-        .prepare(
-          `INSERT INTO appointments
-          (appointment_date, appointment_time, client_name, client_phone)
-          VALUES (?, ?, ?, ?)`
-        )
-        .bind(
-          date,
-          time,
-          name.trim(),
-          phone.trim()
-        )
-        .run();
-
-    } catch (error) {
-      if (
-        error.message &&
-        error.message.includes("UNIQUE")
-      ) {
-        return Response.json(
-          { error: "Ese horario ya está reservado" },
-          { status: 409 }
-        );
-      }
-
-      throw error;
-    }
+    await db
+      .prepare(
+        `INSERT INTO appointments
+        (appointment_date, appointment_time, client_name, client_phone)
+        VALUES (?, ?, ?, ?)`
+      )
+      .bind(
+        date,
+        time,
+        name.trim(),
+        phone.trim()
+      )
+      .run();
 
     return Response.json({
       success: true
     });
 
   } catch (error) {
+    if (error.message && error.message.includes("UNIQUE")) {
+      return Response.json(
+        { error: "Ese horario ya está reservado" },
+        { status: 409 }
+      );
+    }
+
     return Response.json(
       { error: "No se pudo crear la cita" },
       { status: 500 }
