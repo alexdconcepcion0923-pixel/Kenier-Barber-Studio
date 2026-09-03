@@ -70,11 +70,6 @@ input {
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.time:active {
-  transform: scale(.97);
 }
 
 .time.selected {
@@ -117,11 +112,12 @@ button.reserve:disabled {
 }
 
 .message {
-  display: none;
   margin-top: 18px;
-  padding: 15px;
+  padding: 16px;
   border-radius: 10px;
   text-align: center;
+  font-weight: bold;
+  line-height: 1.5;
 }
 
 .message.success {
@@ -135,13 +131,16 @@ button.reserve:disabled {
   background: #ffe9e9;
   color: #8a1111;
 }
+
+.hidden {
+  display: none;
+}
 </style>
 </head>
 
 <body>
 
 <div class="container">
-
   <div class="card">
 
     <h1>Kenier Barber Studio</h1>
@@ -183,7 +182,6 @@ button.reserve:disabled {
       type="text"
       id="name"
       placeholder="Nombre completo"
-      autocomplete="name"
     >
 
     <label for="phone">
@@ -194,7 +192,6 @@ button.reserve:disabled {
       type="tel"
       id="phone"
       placeholder="Número de teléfono"
-      autocomplete="tel"
     >
 
     <button
@@ -206,13 +203,13 @@ button.reserve:disabled {
     </button>
 
     <div
-      class="message"
       id="message"
+      class="hidden"
     ></div>
 
   </div>
-
 </div>
+
 
 <script>
 
@@ -229,6 +226,7 @@ const times = [
   "17:00",
   "18:00"
 ];
+
 
 const dateInput =
   document.getElementById("date");
@@ -251,12 +249,11 @@ const reserveButton =
 const message =
   document.getElementById("message");
 
+
 let selectedTime = null;
 
 
-/* =========================
-   FECHA ACTUAL
-========================= */
+/* FECHA DE HOY */
 
 function getToday() {
 
@@ -282,9 +279,7 @@ dateInput.min = getToday();
 dateInput.value = getToday();
 
 
-/* =========================
-   FORMATO DE HORA
-========================= */
+/* FORMATO DE HORA */
 
 function formatTime(time) {
 
@@ -303,9 +298,7 @@ function formatTime(time) {
 }
 
 
-/* =========================
-   MOSTRAR HORARIOS
-========================= */
+/* MOSTRAR HORARIOS */
 
 function renderTimes(booked = []) {
 
@@ -342,7 +335,7 @@ function renderTimes(booked = []) {
 
       button.addEventListener(
         "click",
-        function() {
+        () => {
 
           selectTime(
             time,
@@ -354,7 +347,6 @@ function renderTimes(booked = []) {
 
     }
 
-
     timesContainer.appendChild(button);
 
   });
@@ -362,9 +354,7 @@ function renderTimes(booked = []) {
 }
 
 
-/* =========================
-   SELECCIONAR HORA
-========================= */
+/* SELECCIONAR HORA */
 
 function selectTime(time, button) {
 
@@ -396,20 +386,14 @@ function selectTime(time, button) {
 }
 
 
-/* =========================
-   VALIDAR FORMULARIO
-========================= */
+/* VALIDAR */
 
 function validateForm() {
 
   const valid =
-
     selectedTime !== null &&
-
     nameInput.value.trim() !== "" &&
-
     phoneInput.value.trim() !== "";
-
 
   reserveButton.disabled =
     !valid;
@@ -417,20 +401,9 @@ function validateForm() {
 }
 
 
-/* =========================
-   CONSULTAR CITAS
-========================= */
+/* CARGAR CITAS */
 
 async function loadAppointments() {
-
-  /*
-    Primero mostramos TODAS
-    las horas.
-
-    Esto significa que aunque
-    la API tenga un problema,
-    las horas seguirán apareciendo.
-  */
 
   renderTimes([]);
 
@@ -444,14 +417,7 @@ async function loadAppointments() {
 
 
     if (!response.ok) {
-
-      console.log(
-        "API respondió:",
-        response.status
-      );
-
       return;
-
     }
 
 
@@ -467,20 +433,9 @@ async function loadAppointments() {
         );
 
 
-    /*
-      Volvemos a dibujar los horarios,
-      esta vez bloqueando los ocupados.
-    */
-
     renderTimes(booked);
 
-
   } catch (error) {
-
-    /*
-      Si la API falla,
-      dejamos las 11 horas disponibles.
-    */
 
     console.log(
       "API no disponible:",
@@ -492,13 +447,27 @@ async function loadAppointments() {
 }
 
 
-/* =========================
-   RESERVAR CITA
-========================= */
+/* MOSTRAR MENSAJE */
+
+function showMessage(text, type) {
+
+  message.textContent = text;
+
+  message.className =
+    `message ${type}`;
+
+}
+
+
+/* RESERVAR */
 
 async function reserveAppointment() {
 
-  if (!selectedTime) {
+  if (
+    !selectedTime ||
+    !nameInput.value.trim() ||
+    !phoneInput.value.trim()
+  ) {
     return;
   }
 
@@ -510,10 +479,10 @@ async function reserveAppointment() {
 
 
   message.className =
-    "message";
+    "hidden";
 
-  message.style.display =
-    "none";
+  message.textContent =
+    "";
 
 
   try {
@@ -557,18 +526,24 @@ async function reserveAppointment() {
 
       throw new Error(
         data.error ||
-        "No se pudo reservar"
+        "No se pudo reservar la cita."
       );
 
     }
 
 
-    message.textContent =
-      `¡Cita reservada correctamente para las ${formatTime(selectedTime)}!`;
+    /*
+      CITA CONFIRMADA
+    */
+
+    const bookedTime =
+      formatTime(selectedTime);
 
 
-    message.className =
-      "message success";
+    showMessage(
+      `✅ ¡Cita reservada correctamente!<br>📅 ${dateInput.value}<br>🕐 ${bookedTime}<br>👤 ${nameInput.value.trim()}`,
+      "success"
+    );
 
 
     nameInput.value = "";
@@ -576,25 +551,27 @@ async function reserveAppointment() {
     phoneInput.value = "";
 
 
+    selectedTime = null;
+
+
+    selectedInfo.textContent =
+      "Cita confirmada";
+
+
+    /*
+      Actualizar horarios
+    */
+
     await loadAppointments();
 
 
   } catch (error) {
 
-    message.textContent =
-      error.message ||
-      "Ocurrió un error. Intenta nuevamente.";
+    showMessage(
+      `❌ ${error.message}`,
+      "error"
+    );
 
-
-    message.className =
-      "message error";
-
-
-    /*
-      Volvemos a consultar
-      por si otro cliente
-      reservó el horario.
-    */
 
     await loadAppointments();
 
@@ -610,9 +587,7 @@ async function reserveAppointment() {
 }
 
 
-/* =========================
-   EVENTOS
-========================= */
+/* EVENTOS */
 
 dateInput.addEventListener(
   "change",
@@ -638,9 +613,7 @@ reserveButton.addEventListener(
 );
 
 
-/* =========================
-   INICIAR
-========================= */
+/* INICIAR */
 
 renderTimes([]);
 
