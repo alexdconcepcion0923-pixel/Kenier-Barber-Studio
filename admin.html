@@ -1,465 +1,1677 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Admin - Kenier Barber Studio</title>
+  <title>Admin — Kenier Barber Studio</title>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      padding: 20px 15px 40px;
       font-family: Arial, Helvetica, sans-serif;
-      background: #f5f5f5;
+      background: #f3f3f3;
       color: #111;
     }
 
-    .container {
-      max-width: 760px;
-      margin: auto;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 38px;
-      margin: 15px 0 35px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 25px;
-      padding: 25px;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    }
-
-    label {
-      display: block;
-      font-weight: 700;
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
+    button,
     input {
-      width: 100%;
-      padding: 17px;
-      border: 2px solid #ddd;
-      border-radius: 15px;
-      font-size: 18px;
-      margin-bottom: 15px;
-      background: white;
+      font-family: inherit;
     }
 
-    button {
-      width: 100%;
-      padding: 18px;
-      border: none;
-      border-radius: 15px;
-      background: #111;
-      color: white;
-      font-size: 19px;
-      font-weight: 700;
-      cursor: pointer;
+    .container {
+      width: min(94%, 650px);
+      margin: auto;
+      padding: 15px 0 40px;
     }
 
-    .summary {
+    /* ================= HEADER ================= */
+
+    .header {
       background: #111;
       color: white;
       border-radius: 18px;
-      padding: 20px;
-      text-align: center;
-      font-size: 20px;
-      margin-bottom: 20px;
+      padding: 18px;
+      margin-bottom: 13px;
     }
 
-    .appointment {
-      background: #fafafa;
-      border: 2px solid #ddd;
-      border-radius: 20px;
-      padding: 25px;
-      margin-bottom: 18px;
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
 
-    .time {
-      font-size: 29px;
-      font-weight: 800;
-      margin-bottom: 20px;
+    .header h1 {
+      margin: 0;
+      font-size: 21px;
     }
 
-    .info {
-      font-size: 18px;
-      line-height: 1.7;
+    .header p {
+      margin: 5px 0 0;
+      color: #bbb;
+      font-size: 12px;
     }
 
-    .service {
-      font-weight: 700;
+    .refresh-button {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 12px;
+      background: white;
+      color: #111;
       font-size: 19px;
+      cursor: pointer;
+    }
+
+    /* ================= CALENDAR ================= */
+
+    .card {
+      background: white;
+      border-radius: 17px;
+      padding: 16px;
+      margin-bottom: 13px;
+      box-shadow: 0 3px 14px rgba(0,0,0,.06);
+    }
+
+    .calendar-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 12px;
     }
 
-    .cancel {
-      background: #c63832;
+    .calendar-title strong {
+      font-size: 16px;
+    }
+
+    .month-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .month-buttons button {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 9px;
+      background: #f0f0f0;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin-bottom: 5px;
+    }
+
+    .weekday {
+      text-align: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: #888;
+      padding: 4px 0;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    .day {
+      height: 43px;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      position: relative;
+    }
+
+    .day:hover {
+      background: #f5f5f5;
+    }
+
+    .day.other-month {
+      color: #ccc;
+    }
+
+    .day.today {
+      border: 2px solid #111;
+      font-weight: 800;
+    }
+
+    .day.selected {
+      background: #111;
+      color: white;
+      border-color: #111;
+      font-weight: 800;
+    }
+
+    .day.closed::after {
+      content: "";
+      position: absolute;
+      bottom: 5px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #d00;
+    }
+
+    .day.selected.closed::after {
+      background: white;
+    }
+
+    /* ================= SELECTED DATE ================= */
+
+    .selected-date {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .selected-date h2 {
+      margin: 0;
+      font-size: 19px;
+    }
+
+    .selected-date p {
+      margin: 4px 0 0;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .status-pill {
+      white-space: nowrap;
+      padding: 7px 10px;
+      border-radius: 20px;
+      background: #e9f8ed;
+      color: #17652d;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .status-pill.closed {
+      background: #ffe7e7;
+      color: #a00000;
+    }
+
+    /* ================= TIMELINE ================= */
+
+    .timeline {
+      position: relative;
+      margin-top: 6px;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      min-height: 82px;
+    }
+
+    .timeline-time {
+      font-size: 11px;
+      color: #777;
+      padding-top: 3px;
+      text-align: right;
+      padding-right: 12px;
+    }
+
+    .timeline-content {
+      border-left: 2px solid #ddd;
+      padding: 0 0 15px 14px;
+      position: relative;
+    }
+
+    .timeline-content::before {
+      content: "";
+      position: absolute;
+      left: -6px;
+      top: 2px;
+      width: 9px;
+      height: 9px;
+      background: #ddd;
+      border-radius: 50%;
+    }
+
+    .free-slot {
+      height: 55px;
+      border: 1px dashed #ddd;
+      border-radius: 10px;
+      color: #aaa;
+      display: flex;
+      align-items: center;
+      padding-left: 12px;
+      font-size: 11px;
+    }
+
+    .appointment {
+      background: #111;
+      color: white;
+      border-radius: 12px;
+      padding: 12px;
+      position: relative;
+    }
+
+    .appointment-time {
+      font-size: 11px;
+      color: #bbb;
+      margin-bottom: 4px;
+    }
+
+    .appointment-name {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .appointment-service {
+      font-size: 11px;
+      color: #ddd;
+      line-height: 1.35;
+    }
+
+    .appointment-phone {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 7px;
+    }
+
+    .cancel-button {
+      width: 100%;
+      height: 35px;
+      border: 0;
+      border-radius: 9px;
+      background: #fff;
+      color: #111;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .cancel-button:hover {
+      opacity: .85;
+    }
+
+    .closed-message {
+      text-align: center;
+      padding: 35px 15px;
+      color: #888;
+      font-size: 13px;
+    }
+
+    .no-appointments {
+      text-align: center;
+      padding: 25px 10px;
+      color: #888;
+      font-size: 13px;
+    }
+
+    /* ================= CURRENT TIME ================= */
+
+    .current-time-line {
+      position: relative;
+      height: 2px;
+      background: #111;
+      margin-left: 62px;
+      margin-bottom: -2px;
+      z-index: 5;
+    }
+
+    .current-time-label {
+      position: absolute;
+      left: -62px;
+      top: -7px;
+      font-size: 9px;
+      font-weight: 700;
+      background: #111;
+      color: white;
+      padding: 3px 5px;
+      border-radius: 5px;
+    }
+
+    /* ================= SETTINGS ================= */
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .settings-header h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .settings-arrow {
+      font-size: 18px;
+      transition: .2s;
+    }
+
+    .settings-content {
+      display: none;
+      margin-top: 15px;
+    }
+
+    .settings-content.open {
+      display: block;
+    }
+
+    .settings-day {
+      border: 1px solid #eee;
+      border-radius: 13px;
+      padding: 13px;
+      margin-bottom: 9px;
+    }
+
+    .settings-day-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .settings-day-name {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .switch {
+      position: relative;
+      width: 43px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: .2s;
+    }
+
+    .switch input:checked + .slider {
+      background: #111;
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(19px);
+    }
+
+    .hours {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .hours label {
+      font-size: 10px;
+      color: #777;
+    }
+
+    .hours input {
+      width: 100%;
+      height: 38px;
+      border: 1px solid #ddd;
+      border-radius: 9px;
+      padding: 0 8px;
+      margin-top: 4px;
+      background: white;
+    }
+
+    .save-button {
+      width: 100%;
+      height: 45px;
+      border: 0;
+      border-radius: 11px;
+      background: #111;
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .save-message {
+      display: none;
+      background: #e9f8ed;
+      color: #17652d;
+      padding: 10px;
+      border-radius: 9px;
+      margin-top: 10px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .error-message {
+      display: none;
+      background: #ffe7e7;
+      color: #a00000;
+      padding: 10px;
+      border-radius: 9px;
+      margin-top: 10px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      color: #999;
+      font-size: 10px;
       margin-top: 20px;
     }
 
-    .empty {
-      text-align: center;
-      padding: 25px;
-      color: #666;
-      font-size: 18px;
-    }
+    @media (max-width: 390px) {
+      .container {
+        width: 94%;
+      }
 
-    .error {
-      background: #ffe8e8;
-      color: #a00000;
-      padding: 18px;
-      border-radius: 15px;
-      line-height: 1.5;
-      margin-top: 15px;
-    }
+      .timeline-row {
+        grid-template-columns: 55px 1fr;
+      }
 
-    .success {
-      background: #e8f7e8;
-      color: #176b17;
-      padding: 18px;
-      border-radius: 15px;
-      margin-top: 15px;
-    }
+      .current-time-line {
+        margin-left: 55px;
+      }
 
+      .selected-date h2 {
+        font-size: 17px;
+      }
+    }
   </style>
-
 </head>
-
 
 <body>
 
 <div class="container">
 
-  <h1>Kenier Barber Studio</h1>
+  <!-- HEADER -->
 
+  <div class="header">
+
+    <div class="header-top">
+
+      <div>
+        <h1>Kenier Barber Studio</h1>
+        <p>Panel de administración</p>
+      </div>
+
+      <button
+        class="refresh-button"
+        id="refreshButton"
+        title="Actualizar"
+      >
+        ↻
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- CALENDARIO -->
 
   <div class="card">
 
-    <label for="date">
-      Seleccionar fecha
-    </label>
+    <div class="calendar-title">
 
-    <input
-      type="date"
-      id="date"
-    >
+      <strong id="monthTitle">
+        Septiembre 2026
+      </strong>
 
-    <button
-      id="loadButton"
-      type="button"
-    >
-      Actualizar citas
-    </button>
+      <div class="month-buttons">
+
+        <button id="previousMonth">
+          ‹
+        </button>
+
+        <button id="nextMonth">
+          ›
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="weekdays">
+
+      <div class="weekday">DOM</div>
+      <div class="weekday">LUN</div>
+      <div class="weekday">MAR</div>
+      <div class="weekday">MIÉ</div>
+      <div class="weekday">JUE</div>
+      <div class="weekday">VIE</div>
+      <div class="weekday">SÁB</div>
+
+    </div>
+
+
+    <div
+      class="calendar-grid"
+      id="calendarGrid"
+    ></div>
 
   </div>
 
 
-  <div
-    id="summary"
-    class="summary"
-  >
-    Cargando...
+  <!-- DÍA SELECCIONADO -->
+
+  <div class="card">
+
+    <div class="selected-date">
+
+      <div>
+
+        <h2 id="selectedDateTitle">
+          Cargando...
+        </h2>
+
+        <p id="selectedDateSubtitle">
+          —
+        </p>
+
+      </div>
+
+      <div
+        class="status-pill"
+        id="statusPill"
+      >
+        Disponible
+      </div>
+
+    </div>
+
   </div>
 
 
-  <div id="appointments"></div>
+  <!-- TIMELINE -->
+
+  <div class="card">
+
+    <div
+      class="timeline"
+      id="timeline"
+    >
+      Cargando...
+    </div>
+
+  </div>
+
+
+  <!-- CONFIGURACIÓN -->
+
+  <div class="card">
+
+    <div
+      class="settings-header"
+      id="settingsHeader"
+    >
+
+      <h2>
+        ⚙️ Horario de trabajo
+      </h2>
+
+      <span
+        class="settings-arrow"
+        id="settingsArrow"
+      >
+        ›
+      </span>
+
+    </div>
+
+
+    <div
+      class="settings-content"
+      id="settingsContent"
+    >
+
+      <div id="settingsDays">
+        Cargando horarios...
+      </div>
+
+      <button
+        class="save-button"
+        id="saveSettingsButton"
+      >
+        Guardar horarios
+      </button>
+
+      <div
+        class="save-message"
+        id="saveMessage"
+      >
+        ✓ Horarios guardados correctamente
+      </div>
+
+      <div
+        class="error-message"
+        id="settingsError"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <div class="footer">
+    Kenier Barber Studio · Administración
+  </div>
 
 </div>
 
 
 <script>
 
-  const API_URL =
+  /*
+  ==========================================================
+  CONFIGURACIÓN
+  ==========================================================
+  */
+
+  const APPOINTMENTS_API =
     "https://kenier-barber-studio.pages.dev/api/appointments";
 
-
-  const dateInput =
-    document.getElementById("date");
-
-  const loadButton =
-    document.getElementById("loadButton");
-
-  const summary =
-    document.getElementById("summary");
-
-  const appointmentsContainer =
-    document.getElementById("appointments");
+  const SETTINGS_API =
+    "https://kenier-barber-studio.pages.dev/api/settings";
 
 
-  const today =
-    new Date().toISOString().split("T")[0];
+  /*
+  ==========================================================
+  ELEMENTOS
+  ==========================================================
+  */
 
-  dateInput.value =
-    today;
+  const monthTitle =
+    document.getElementById("monthTitle");
 
-  dateInput.min =
-    today;
+  const calendarGrid =
+    document.getElementById("calendarGrid");
 
+  const selectedDateTitle =
+    document.getElementById("selectedDateTitle");
+
+  const selectedDateSubtitle =
+    document.getElementById("selectedDateSubtitle");
+
+  const statusPill =
+    document.getElementById("statusPill");
+
+  const timeline =
+    document.getElementById("timeline");
+
+  const refreshButton =
+    document.getElementById("refreshButton");
+
+  const previousMonth =
+    document.getElementById("previousMonth");
+
+  const nextMonth =
+    document.getElementById("nextMonth");
+
+  const settingsHeader =
+    document.getElementById("settingsHeader");
+
+  const settingsContent =
+    document.getElementById("settingsContent");
+
+  const settingsArrow =
+    document.getElementById("settingsArrow");
+
+  const settingsDays =
+    document.getElementById("settingsDays");
+
+  const saveSettingsButton =
+    document.getElementById("saveSettingsButton");
+
+  const saveMessage =
+    document.getElementById("saveMessage");
+
+  const settingsError =
+    document.getElementById("settingsError");
+
+
+  /*
+  ==========================================================
+  VARIABLES
+  ==========================================================
+  */
+
+  let currentDate =
+    getCubaToday();
+
+  let selectedDate =
+    getCubaToday();
+
+  let currentMonth =
+    new Date(
+      currentDate + "T12:00:00"
+    );
+
+  let businessHours =
+    [];
+
+
+  /*
+  ==========================================================
+  NOMBRES
+  ==========================================================
+  */
+
+  const monthNames = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre"
+  ];
+
+  const dayNames = [
+    "Domingo",
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado"
+  ];
+
+
+  /*
+  ==========================================================
+  HORA DE CUBA
+  ==========================================================
+  */
+
+  function getCubaToday() {
+
+    const formatter =
+      new Intl.DateTimeFormat(
+        "en-CA",
+        {
+          timeZone: "America/Havana",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }
+      );
+
+    return formatter.format(
+      new Date()
+    );
+
+  }
+
+
+  /*
+  ==========================================================
+  FECHA A DAY OF WEEK
+  ==========================================================
+  */
+
+  function getDayOfWeek(dateString) {
+
+    return new Date(
+      dateString + "T12:00:00Z"
+    ).getUTCDay();
+
+  }
+
+
+  /*
+  ==========================================================
+  FORMATEAR FECHA
+  ==========================================================
+  */
+
+  function formatLongDate(dateString) {
+
+    const date =
+      new Date(
+        dateString + "T12:00:00"
+      );
+
+    return date.toLocaleDateString(
+      "es-ES",
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }
+    );
+
+  }
+
+
+  /*
+  ==========================================================
+  FORMATEAR HORA
+  ==========================================================
+  */
 
   function formatTime(time) {
 
-    const [hour, minute] =
+    const [hourString, minute] =
       time.split(":");
 
-    let h =
-      parseInt(hour);
+    let hour =
+      Number(hourString);
 
-    const ampm =
-      h >= 12 ? "PM" : "AM";
+    const suffix =
+      hour >= 12 ? "PM" : "AM";
 
-    h =
-      h % 12;
+    hour =
+      hour % 12 || 12;
 
-    if (h === 0) {
-      h = 12;
-    }
-
-    return `${h}:${minute} ${ampm}`;
+    return `${hour}:${minute} ${suffix}`;
 
   }
 
 
-  function formatDate(date) {
+  /*
+  ==========================================================
+  CREAR STRING YYYY-MM-DD
+  ==========================================================
+  */
 
-    const parts =
-      date.split("-");
+  function dateToString(date) {
 
     const year =
-      parts[0];
+      date.getFullYear();
 
     const month =
-      parseInt(parts[1], 10);
+      String(
+        date.getMonth() + 1
+      ).padStart(2, "0");
 
     const day =
-      parseInt(parts[2], 10);
+      String(
+        date.getDate()
+      ).padStart(2, "0");
 
-    const months = [
-      "enero",
-      "febrero",
-      "marzo",
-      "abril",
-      "mayo",
-      "junio",
-      "julio",
-      "agosto",
-      "septiembre",
-      "octubre",
-      "noviembre",
-      "diciembre"
-    ];
-
-    return `${day} de ${months[month - 1]} de ${year}`;
+    return `${year}-${month}-${day}`;
 
   }
 
+
+  /*
+  ==========================================================
+  CALENDARIO
+  ==========================================================
+  */
+
+  function renderCalendar() {
+
+    calendarGrid.innerHTML = "";
+
+    const year =
+      currentMonth.getFullYear();
+
+    const month =
+      currentMonth.getMonth();
+
+
+    monthTitle.textContent =
+      `${monthNames[month]} ${year}`;
+
+
+    const firstDay =
+      new Date(
+        year,
+        month,
+        1
+      ).getDay();
+
+
+    const daysInMonth =
+      new Date(
+        year,
+        month + 1,
+        0
+      ).getDate();
+
+
+    const previousMonthDays =
+      new Date(
+        year,
+        month,
+        0
+      ).getDate();
+
+
+    /*
+      Días del mes anterior
+    */
+
+    for (
+      let i = firstDay - 1;
+      i >= 0;
+      i--
+    ) {
+
+      const day =
+        previousMonthDays - i;
+
+      const cell =
+        document.createElement("div");
+
+      cell.className =
+        "day other-month";
+
+      cell.textContent =
+        day;
+
+      calendarGrid.appendChild(
+        cell
+      );
+
+    }
+
+
+    /*
+      Días del mes actual
+    */
+
+    for (
+      let dayNumber = 1;
+      dayNumber <= daysInMonth;
+      dayNumber++
+    ) {
+
+      const cell =
+        document.createElement("div");
+
+      cell.className =
+        "day";
+
+      const dateString =
+        `${year}-${String(month + 1).padStart(2, "0")}-${String(dayNumber).padStart(2, "0")}`;
+
+      cell.textContent =
+        dayNumber;
+
+
+      if (
+        dateString === currentDate
+      ) {
+
+        cell.classList.add(
+          "today"
+        );
+
+      }
+
+
+      if (
+        dateString === selectedDate
+      ) {
+
+        cell.classList.add(
+          "selected"
+        );
+
+      }
+
+
+      const dayOfWeek =
+        getDayOfWeek(
+          dateString
+        );
+
+      const schedule =
+        businessHours.find(
+          item =>
+            Number(item.day_of_week) ===
+            dayOfWeek
+        );
+
+
+      if (
+        schedule &&
+        Number(schedule.is_available) !== 1
+      ) {
+
+        cell.classList.add(
+          "closed"
+        );
+
+      }
+
+
+      cell.addEventListener(
+        "click",
+        async () => {
+
+          selectedDate =
+            dateString;
+
+          renderCalendar();
+
+          await loadSelectedDay();
+
+        }
+      );
+
+
+      calendarGrid.appendChild(
+        cell
+      );
+
+    }
+
+  }
+
+
+  /*
+  ==========================================================
+  CARGAR HORARIOS
+  ==========================================================
+  */
+
+  async function loadBusinessHours() {
+
+    try {
+
+      const response =
+        await fetch(
+          `${SETTINGS_API}?t=${Date.now()}`,
+          {
+            cache: "no-store"
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "No se pudieron cargar los horarios."
+        );
+      }
+
+
+      businessHours =
+        data;
+
+
+      renderCalendar();
+
+      renderSettings();
+
+
+    } catch (error) {
+
+      settingsDays.textContent =
+        "No se pudieron cargar los horarios.";
+
+    }
+
+  }
+
+
+  /*
+  ==========================================================
+  OBTENER HORARIO DE UN DÍA
+  ==========================================================
+  */
+
+  function getScheduleForDate(dateString) {
+
+    const dayOfWeek =
+      getDayOfWeek(
+        dateString
+      );
+
+    return businessHours.find(
+      item =>
+        Number(item.day_of_week) ===
+        dayOfWeek
+    );
+
+  }
+
+
+  /*
+  ==========================================================
+  CARGAR DÍA SELECCIONADO
+  ==========================================================
+  */
+
+  async function loadSelectedDay() {
+
+    selectedDateTitle.textContent =
+      capitalize(
+        formatLongDate(
+          selectedDate
+        )
+      );
+
+
+    const schedule =
+      getScheduleForDate(
+        selectedDate
+      );
+
+
+    if (
+      schedule &&
+      Number(schedule.is_available) === 1
+    ) {
+
+      statusPill.textContent =
+        `${formatTime(schedule.open_time)} — ${formatTime(schedule.close_time)}`;
+
+      statusPill.classList.remove(
+        "closed"
+      );
+
+      selectedDateSubtitle.textContent =
+        "Horario de trabajo";
+
+    } else {
+
+      statusPill.textContent =
+        "Cerrado";
+
+      statusPill.classList.add(
+        "closed"
+      );
+
+      selectedDateSubtitle.textContent =
+        "No disponible";
+
+    }
+
+
+    await loadAppointments();
+
+  }
+
+
+  /*
+  ==========================================================
+  CARGAR CITAS
+  ==========================================================
+  */
 
   async function loadAppointments() {
 
-    const date =
-      dateInput.value;
-
-    if (!date) {
-      return;
-    }
-
-
-    summary.textContent =
+    timeline.innerHTML =
       "Cargando...";
-
-    appointmentsContainer.innerHTML =
-      "";
 
 
     try {
 
       const response =
         await fetch(
-          `${API_URL}?date=${encodeURIComponent(date)}`,
+          `${APPOINTMENTS_API}?date=${encodeURIComponent(selectedDate)}&t=${Date.now()}`,
           {
-            method: "GET",
-            mode: "cors",
             cache: "no-store"
           }
         );
 
 
-      const raw =
-        await response.text();
-
-
-      let data;
-
-      try {
-
-        data =
-          JSON.parse(raw);
-
-      } catch {
-
-        throw new Error(
-          "Respuesta inválida del servidor."
-        );
-
-      }
+      const appointments =
+        await response.json();
 
 
       if (!response.ok) {
 
         throw new Error(
-          data.error ||
+          appointments.error ||
           "No se pudieron cargar las citas."
         );
 
       }
 
 
-      summary.textContent =
-        `${data.length} ${
-          data.length === 1
-            ? "cita"
-            : "citas"
-        } para este día`;
-
-
-      if (data.length === 0) {
-
-        appointmentsContainer.innerHTML = `
-          <div class="card empty">
-            No hay citas reservadas para
-            ${formatDate(date)}.
-          </div>
-        `;
-
-        return;
-      }
-
-
-      data.forEach(
-        appointment => {
-
-          const card =
-            document.createElement("div");
-
-          card.className =
-            "appointment";
-
-
-          const service =
-            appointment.service ||
-            "Pelado clásico o al cero — $300 pesos";
-
-
-          card.innerHTML = `
-
-            <div class="time">
-              ${formatTime(
-                appointment.appointment_time
-              )}
-            </div>
-
-            <div class="service">
-              💈 ${escapeHtml(service)}
-            </div>
-
-            <div class="info">
-
-              <strong>Cliente:</strong>
-              ${escapeHtml(
-                appointment.client_name
-              )}
-              <br>
-
-              <strong>Teléfono:</strong>
-              ${escapeHtml(
-                appointment.client_phone
-              )}
-              <br>
-
-              <strong>Estado:</strong>
-              ${escapeHtml(
-                appointment.status
-              )}
-
-            </div>
-
-            <button
-              class="cancel"
-              type="button"
-            >
-              Cancelar cita
-            </button>
-
-          `;
-
-
-          const cancelButton =
-            card.querySelector(
-              ".cancel"
-            );
-
-
-          cancelButton.addEventListener(
-            "click",
-            () =>
-              cancelAppointment(
-                appointment.id
-              )
-          );
-
-
-          appointmentsContainer
-            .appendChild(card);
-
-        }
+      renderTimeline(
+        appointments || []
       );
 
 
     } catch (error) {
 
-      summary.textContent =
-        "Error";
-
-      appointmentsContainer.innerHTML = `
-        <div class="error">
-          ❌ Error conectando con el servidor.
-          <br><br>
-          ${escapeHtml(
-            error.message
-          )}
-        </div>
-      `;
+      timeline.innerHTML =
+        `<div class="no-appointments">
+          ${escapeHtml(error.message)}
+        </div>`;
 
     }
 
   }
 
 
-  async function cancelAppointment(id) {
+  /*
+  ==========================================================
+  TIMELINE
+  ==========================================================
+  */
 
-    const confirmCancel =
+  function renderTimeline(
+    appointments
+  ) {
+
+    const schedule =
+      getScheduleForDate(
+        selectedDate
+      );
+
+
+    if (
+      !schedule ||
+      Number(schedule.is_available) !== 1
+    ) {
+
+      /*
+        Aunque esté cerrado,
+        mostramos las citas existentes.
+      */
+
+      if (
+        appointments.length === 0
+      ) {
+
+        timeline.innerHTML =
+          `<div class="closed-message">
+            🔴 Este día está cerrado.<br><br>
+            No hay citas programadas.
+          </div>`;
+
+        return;
+
+      }
+
+    }
+
+
+    let startHour = 8;
+    let endHour = 19;
+
+
+    if (schedule) {
+
+      startHour =
+        Number(
+          schedule.open_time.split(":")[0]
+        );
+
+      endHour =
+        Number(
+          schedule.close_time.split(":")[0]
+        );
+
+    }
+
+
+    /*
+      Mapa de citas por hora
+    */
+
+    const appointmentMap =
+      new Map();
+
+
+    appointments.forEach(
+      appointment => {
+
+        appointmentMap.set(
+          appointment.appointment_time,
+          appointment
+        );
+
+      }
+    );
+
+
+    timeline.innerHTML = "";
+
+
+    /*
+      Línea de hora actual
+    */
+
+    const cubaNow =
+      getCubaDateTime();
+
+
+    const isToday =
+      selectedDate ===
+      cubaNow.date;
+
+
+    for (
+      let hour = startHour;
+      hour < endHour;
+      hour++
+    ) {
+
+      const time =
+        `${String(hour).padStart(2, "0")}:00`;
+
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+      row.className =
+        "timeline-row";
+
+
+      const timeLabel =
+        document.createElement(
+          "div"
+        );
+
+      timeLabel.className =
+        "timeline-time";
+
+      timeLabel.textContent =
+        formatTime(time);
+
+
+      const content =
+        document.createElement(
+          "div"
+        );
+
+      content.className =
+        "timeline-content";
+
+
+      const appointment =
+        appointmentMap.get(
+          time
+        );
+
+
+      if (appointment) {
+
+        const card =
+          document.createElement(
+            "div"
+          );
+
+        card.className =
+          "appointment";
+
+
+        card.innerHTML = `
+          <div class="appointment-time">
+            ${formatTime(appointment.appointment_time)}
+            — ${formatTime(
+              `${String(
+                Number(
+                  appointment.appointment_time.split(":")[0]
+                ) + 1
+              ).padStart(2, "0")}:00`
+            )}
+          </div>
+
+          <div class="appointment-name">
+            ${escapeHtml(appointment.client_name)}
+          </div>
+
+          <div class="appointment-service">
+            ${escapeHtml(
+              appointment.service ||
+              "Pelado clásico o al cero"
+            )}
+          </div>
+
+          <div class="appointment-phone">
+            📱 ${escapeHtml(appointment.client_phone)}
+          </div>
+
+          <button
+            class="cancel-button"
+            data-id="${appointment.id}"
+          >
+            Cancelar cita
+          </button>
+        `;
+
+
+        const cancelButton =
+          card.querySelector(
+            ".cancel-button"
+          );
+
+
+        cancelButton.addEventListener(
+          "click",
+          async () => {
+
+            await cancelAppointment(
+              appointment.id
+            );
+
+          }
+        );
+
+
+        content.appendChild(
+          card
+        );
+
+      } else {
+
+        const free =
+          document.createElement(
+            "div"
+          );
+
+        free.className =
+          "free-slot";
+
+        free.textContent =
+          "Disponible";
+
+        content.appendChild(
+          free
+        );
+
+      }
+
+
+      row.appendChild(
+        timeLabel
+      );
+
+      row.appendChild(
+        content
+      );
+
+      timeline.appendChild(
+        row
+      );
+
+
+      /*
+        Línea de hora actual
+      */
+
+      if (
+        isToday &&
+        cubaNow.hour === hour
+      ) {
+
+        const line =
+          document.createElement(
+            "div"
+          );
+
+        line.className =
+          "current-time-line";
+
+
+        const label =
+          document.createElement(
+            "div"
+          );
+
+        label.className =
+          "current-time-label";
+
+        label.textContent =
+          `${String(cubaNow.hour).padStart(2,"0")}:${String(cubaNow.minute).padStart(2,"0")}`;
+
+
+        line.appendChild(
+          label
+        );
+
+        timeline.appendChild(
+          line
+        );
+
+      }
+
+    }
+
+
+    if (
+      appointments.length === 0
+    ) {
+
+      /*
+        No mostramos un mensaje adicional porque
+        los espacios disponibles ya aparecen
+        en la línea de tiempo.
+      */
+
+    }
+
+  }
+
+
+  /*
+  ==========================================================
+  HORA ACTUAL CUBA
+  ==========================================================
+  */
+
+  function getCubaDateTime() {
+
+    const formatter =
+      new Intl.DateTimeFormat(
+        "en-CA",
+        {
+          timeZone: "America/Havana",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false
+        }
+      );
+
+
+    const parts =
+      formatter.formatToParts(
+        new Date()
+      );
+
+
+    const values = {};
+
+
+    parts.forEach(
+      part => {
+
+        if (
+          part.type !== "literal"
+        ) {
+
+          values[part.type] =
+            part.value;
+
+        }
+
+      }
+    );
+
+
+    return {
+
+      date:
+        `${values.year}-${values.month}-${values.day}`,
+
+      hour:
+        Number(values.hour),
+
+      minute:
+        Number(values.minute)
+
+    };
+
+  }
+
+
+  /*
+  ==========================================================
+  CANCELAR CITA
+  ==========================================================
+  */
+
+  async function cancelAppointment(
+    id
+  ) {
+
+    const confirmed =
       confirm(
         "¿Seguro que quieres cancelar esta cita?"
       );
 
 
-    if (!confirmCancel) {
+    if (!confirmed) {
       return;
     }
 
@@ -468,14 +1680,15 @@
 
       const response =
         await fetch(
-          API_URL,
+          APPOINTMENTS_API,
           {
             method: "DELETE",
-            mode: "cors",
+
             headers: {
               "Content-Type":
                 "text/plain;charset=UTF-8"
             },
+
             body: JSON.stringify({
               id: id
             })
@@ -483,30 +1696,14 @@
         );
 
 
-      const raw =
-        await response.text();
-
-
-      let data;
-
-      try {
-
-        data =
-          JSON.parse(raw);
-
-      } catch {
-
-        throw new Error(
-          "Respuesta inválida del servidor."
-        );
-
-      }
+      const result =
+        await response.json();
 
 
       if (!response.ok) {
 
         throw new Error(
-          data.error ||
+          result.error ||
           "No se pudo cancelar la cita."
         );
 
@@ -518,8 +1715,8 @@
     } catch (error) {
 
       alert(
-        "No se pudo cancelar la cita: " +
-        error.message
+        error.message ||
+        "No se pudo cancelar la cita."
       );
 
     }
@@ -527,35 +1724,492 @@
   }
 
 
-  function escapeHtml(text) {
+  /*
+  ==========================================================
+  CONFIGURACIÓN DE HORARIOS
+  ==========================================================
+  */
+
+  function renderSettings() {
+
+    settingsDays.innerHTML = "";
+
+
+    businessHours.forEach(
+      schedule => {
+
+        const day =
+          Number(
+            schedule.day_of_week
+          );
+
+
+        const wrapper =
+          document.createElement(
+            "div"
+          );
+
+        wrapper.className =
+          "settings-day";
+
+
+        wrapper.innerHTML = `
+
+          <div class="settings-day-top">
+
+            <div class="settings-day-name">
+              ${dayNames[day]}
+            </div>
+
+            <label class="switch">
+
+              <input
+                type="checkbox"
+                class="availability-toggle"
+                data-day="${day}"
+                ${Number(schedule.is_available) === 1 ? "checked" : ""}
+              >
+
+              <span class="slider"></span>
+
+            </label>
+
+          </div>
+
+
+          <div class="hours">
+
+            <label>
+              Abre
+
+              <input
+                type="time"
+                class="open-time"
+                data-day="${day}"
+                value="${schedule.open_time}"
+                ${Number(schedule.is_available) === 1 ? "" : "disabled"}
+              >
+
+            </label>
+
+
+            <label>
+              Cierra
+
+              <input
+                type="time"
+                class="close-time"
+                data-day="${day}"
+                value="${schedule.close_time}"
+                ${Number(schedule.is_available) === 1 ? "" : "disabled"}
+              >
+
+            </label>
+
+          </div>
+        `;
+
+
+        settingsDays.appendChild(
+          wrapper
+        );
+
+      }
+    );
+
+
+    /*
+      Activar/desactivar inputs
+    */
+
+    document
+      .querySelectorAll(
+        ".availability-toggle"
+      )
+      .forEach(
+        toggle => {
+
+          toggle.addEventListener(
+            "change",
+            () => {
+
+              const day =
+                toggle.dataset.day;
+
+
+              const open =
+                document.querySelector(
+                  `.open-time[data-day="${day}"]`
+                );
+
+              const close =
+                document.querySelector(
+                  `.close-time[data-day="${day}"]`
+                );
+
+
+              open.disabled =
+                !toggle.checked;
+
+              close.disabled =
+                !toggle.checked;
+
+            }
+          );
+
+        }
+      );
+
+  }
+
+
+  /*
+  ==========================================================
+  GUARDAR HORARIOS
+  ==========================================================
+  */
+
+  saveSettingsButton.addEventListener(
+    "click",
+    async () => {
+
+      saveMessage.style.display =
+        "none";
+
+      settingsError.style.display =
+        "none";
+
+
+      const toggles =
+        document.querySelectorAll(
+          ".availability-toggle"
+        );
+
+
+      saveSettingsButton.disabled =
+        true;
+
+      saveSettingsButton.textContent =
+        "Guardando...";
+
+
+      try {
+
+        for (
+          const toggle of toggles
+        ) {
+
+          const day =
+            Number(
+              toggle.dataset.day
+            );
+
+
+          const open =
+            document.querySelector(
+              `.open-time[data-day="${day}"]`
+            ).value;
+
+
+          const close =
+            document.querySelector(
+              `.close-time[data-day="${day}"]`
+            ).value;
+
+
+          const response =
+            await fetch(
+              SETTINGS_API,
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "text/plain;charset=UTF-8"
+                },
+
+                body: JSON.stringify({
+
+                  day_of_week:
+                    day,
+
+                  is_available:
+                    toggle.checked ? 1 : 0,
+
+                  open_time:
+                    open || "08:00",
+
+                  close_time:
+                    close || "19:00"
+
+                })
+
+              }
+            );
+
+
+          const result =
+            await response.json();
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              result.error ||
+              `No se pudo guardar ${dayNames[day]}`
+            );
+
+          }
+
+        }
+
+
+        saveMessage.style.display =
+          "block";
+
+
+        await loadBusinessHours();
+
+        await loadSelectedDay();
+
+
+        setTimeout(
+          () => {
+
+            saveMessage.style.display =
+              "none";
+
+          },
+          3000
+        );
+
+
+      } catch (error) {
+
+        settingsError.textContent =
+          error.message ||
+          "No se pudieron guardar los horarios.";
+
+        settingsError.style.display =
+          "block";
+
+      } finally {
+
+        saveSettingsButton.disabled =
+          false;
+
+        saveSettingsButton.textContent =
+          "Guardar horarios";
+
+      }
+
+    }
+  );
+
+
+  /*
+  ==========================================================
+  ABRIR / CERRAR CONFIGURACIÓN
+  ==========================================================
+  */
+
+  settingsHeader.addEventListener(
+    "click",
+    () => {
+
+      settingsContent.classList.toggle(
+        "open"
+      );
+
+
+      if (
+        settingsContent.classList.contains(
+          "open"
+        )
+      ) {
+
+        settingsArrow.textContent =
+          "⌄";
+
+      } else {
+
+        settingsArrow.textContent =
+          "›";
+
+      }
+
+    }
+  );
+
+
+  /*
+  ==========================================================
+  CAMBIAR MES
+  ==========================================================
+  */
+
+  previousMonth.addEventListener(
+    "click",
+    () => {
+
+      currentMonth =
+        new Date(
+          currentMonth.getFullYear(),
+          currentMonth.getMonth() - 1,
+          1
+        );
+
+      renderCalendar();
+
+    }
+  );
+
+
+  nextMonth.addEventListener(
+    "click",
+    () => {
+
+      currentMonth =
+        new Date(
+          currentMonth.getFullYear(),
+          currentMonth.getMonth() + 1,
+          1
+        );
+
+      renderCalendar();
+
+    }
+  );
+
+
+  /*
+  ==========================================================
+  ACTUALIZAR
+  ==========================================================
+  */
+
+  refreshButton.addEventListener(
+    "click",
+    async () => {
+
+      refreshButton.textContent =
+        "…";
+
+
+      try {
+
+        currentDate =
+          getCubaToday();
+
+
+        await loadBusinessHours();
+
+        await loadSelectedDay();
+
+      } finally {
+
+        refreshButton.textContent =
+          "↻";
+
+      }
+
+    }
+  );
+
+
+  /*
+  ==========================================================
+  ESCAPAR HTML
+  ==========================================================
+  */
+
+  function escapeHtml(value) {
 
     const div =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     div.textContent =
-      text ?? "";
+      value == null
+        ? ""
+        : String(value);
 
     return div.innerHTML;
 
   }
 
 
-  loadButton.addEventListener(
-    "click",
-    loadAppointments
+  /*
+  ==========================================================
+  CAPITALIZAR
+  ==========================================================
+  */
+
+  function capitalize(text) {
+
+    if (!text) {
+      return "";
+    }
+
+    return text.charAt(0).toUpperCase()
+      + text.slice(1);
+
+  }
+
+
+  /*
+  ==========================================================
+  INICIALIZACIÓN
+  ==========================================================
+  */
+
+  async function init() {
+
+    currentDate =
+      getCubaToday();
+
+    selectedDate =
+      currentDate;
+
+
+    currentMonth =
+      new Date(
+        currentDate + "T12:00:00"
+      );
+
+
+    await loadBusinessHours();
+
+    await loadSelectedDay();
+
+  }
+
+
+  init();
+
+
+  /*
+  ==========================================================
+  ACTUALIZAR CADA MINUTO
+  ==========================================================
+  */
+
+  setInterval(
+    async () => {
+
+      currentDate =
+        getCubaToday();
+
+      await loadSelectedDay();
+
+      renderCalendar();
+
+    },
+    60000
   );
-
-
-  dateInput.addEventListener(
-    "change",
-    loadAppointments
-  );
-
-
-  loadAppointments();
 
 </script>
 
 </body>
-
 </html>
