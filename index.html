@@ -1,2547 +1,1267 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Kenier Barber Studio</title>
 
-
   <style>
-
     * {
       box-sizing: border-box;
     }
 
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-
     body {
       margin: 0;
-      padding: 0;
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-      background: #f4f4f4;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f3f3;
       color: #111;
     }
 
-
-    /* =========================
-       HEADER
-    ========================= */
-
-    .header {
-      background: #111;
-      color: white;
-
-      padding:
-        20px
-        15px;
-
-      text-align: center;
-
-      box-shadow:
-        0 4px 18px
-        rgba(0,0,0,.12);
+    .container {
+      width: min(92%, 430px);
+      margin: auto;
+      padding: 16px 0 40px;
     }
 
+    .header {
+      text-align: center;
+      padding: 8px 0 18px;
+    }
 
     .header h1 {
       margin: 0;
-
-      font-size: 27px;
-
+      font-size: 24px;
       font-weight: 800;
-
-      letter-spacing: .2px;
     }
-
 
     .header p {
-      margin:
-        6px
-        0
-        0;
-
-      font-size: 11px;
-
-      letter-spacing: 3px;
-
-      opacity: .7;
+      margin: 5px 0 0;
+      color: #666;
+      font-size: 13px;
     }
-
-
-    /* =========================
-       CONTENEDOR
-    ========================= */
-
-    .container {
-      width:
-        min(
-          700px,
-          calc(100% - 20px)
-        );
-
-      margin:
-        15px
-        auto
-        35px;
-    }
-
-
-    /* =========================
-       TARJETAS
-    ========================= */
 
     .card {
-      background: white;
-
+      background: #fff;
       border-radius: 16px;
-
       padding: 17px;
-
-      margin-bottom: 11px;
-
-      border:
-        1px solid
-        #e8e8e8;
-
-      box-shadow:
-        0 4px 15px
-        rgba(0,0,0,.055);
+      margin-bottom: 13px;
+      box-shadow: 0 3px 14px rgba(0,0,0,.07);
     }
 
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
 
-    .section-title {
-      display: flex;
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-size: 13px;
+      font-weight: 700;
+    }
 
-      align-items: center;
+    input,
+    select,
+    button {
+      width: 100%;
+      height: 45px;
+      border-radius: 11px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      font-family: inherit;
+    }
 
-      gap: 10px;
+    input,
+    select {
+      padding: 0 12px;
+      background: #fff;
+      outline: none;
+    }
 
+    input:focus,
+    select:focus {
+      border-color: #111;
+    }
+
+    button {
+      border: none;
+      background: #111;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: .88;
+    }
+
+    button:active {
+      transform: scale(.98);
+    }
+
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .service-select,
+    .time-select {
+      appearance: auto;
+    }
+
+    .schedule {
+      display: none;
+    }
+
+    .schedule-info {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .available-message {
+      font-size: 13px;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    .booking-card {
+      display: none;
+    }
+
+    .selected-time {
+      background: #f2f2f2;
+      border-radius: 10px;
+      padding: 11px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
       margin-bottom: 12px;
     }
 
-
-    .number {
-      width: 29px;
-      height: 29px;
-
-      min-width: 29px;
-
-      border-radius: 50%;
-
-      background: #111;
-
-      color: white;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: center;
-
-      font-size: 13px;
-
-      font-weight: 800;
-    }
-
-
-    .section-title h2 {
-      margin: 0;
-
-      font-size: 17px;
-    }
-
-
-    .description {
-      margin:
-        -3px
-        0
-        12px
-        39px;
-
-      color: #666;
-
-      font-size: 12px;
-
-      line-height: 1.4;
-    }
-
-
-    /* =========================
-       DROPDOWNS
-    ========================= */
-
-    .dropdown {
-      position: relative;
-      width: 100%;
-    }
-
-
-    .dropdown-button {
-      width: 100%;
-
-      height: 48px;
-
-      border:
-        1.5px
-        solid
-        #ddd;
-
-      background: white;
-
-      border-radius: 11px;
-
-      padding:
-        0
-        13px;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: space-between;
-
-      cursor: pointer;
-
-      transition:
-        .2s ease;
-
-      font-size: 14px;
-
-      color: #111;
-
-      text-align: left;
-    }
-
-
-    .dropdown-button:hover {
-      border-color: #111;
-
-      box-shadow:
-        0 4px 12px
-        rgba(0,0,0,.07);
-    }
-
-
-    .dropdown-button.active {
-      border-color: #111;
-
-      border-radius:
-        11px
-        11px
-        0
-        0;
-    }
-
-
-    .dropdown-left {
-      display: flex;
-
-      align-items: center;
-
-      gap: 9px;
-
-      min-width: 0;
-    }
-
-
-    .dropdown-icon {
-      font-size: 17px;
-    }
-
-
-    .dropdown-arrow {
-      font-size: 17px;
-
-      transition:
-        transform
-        .2s ease;
-    }
-
-
-    .dropdown-button.active
-    .dropdown-arrow {
-      transform:
-        rotate(180deg);
-    }
-
-
-    .dropdown-menu {
-      position: absolute;
-
-      z-index: 100;
-
-      top: 47px;
-
-      left: 0;
-
-      width: 100%;
-
-      background: white;
-
-      border:
-        1.5px
-        solid
-        #111;
-
-      border-top: none;
-
-      border-radius:
-        0
-        0
-        11px
-        11px;
-
-      overflow: hidden;
-
+    .confirmation {
       display: none;
-
-      box-shadow:
-        0 12px 25px
-        rgba(0,0,0,.13);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 13px;
+      background: #111;
+      color: white;
+      box-shadow: 0 5px 20px rgba(0,0,0,.15);
     }
 
-
-    .dropdown-menu.open {
-      display: block;
-
-      animation:
-        dropdownIn
-        .15s
-        ease;
-    }
-
-
-    @keyframes dropdownIn {
-
-      from {
-        opacity: 0;
-
-        transform:
-          translateY(-4px);
-      }
-
-      to {
-        opacity: 1;
-
-        transform:
-          translateY(0);
-      }
-
-    }
-
-
-    /* =========================
-       SERVICIOS
-    ========================= */
-
-    .service-item,
-    .time-item {
-      width: 100%;
-
-      border: none;
-
-      border-bottom:
-        1px
-        solid
-        #eee;
-
-      background: white;
-
-      padding:
-        12px
-        13px;
-
-      cursor: pointer;
-
-      text-align: left;
-
-      transition:
-        .18s ease;
-
+    .confirmation-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #fff;
       color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      font-weight: bold;
+      margin-bottom: 12px;
     }
 
+    .confirmation h2 {
+      margin: 0 0 6px;
+      font-size: 21px;
+    }
 
-    .service-item:last-child,
-    .time-item:last-child {
+    .confirmation-subtitle {
+      margin: 0 0 16px;
+      color: #ccc;
+      font-size: 13px;
+    }
+
+    .confirmation-details {
+      background: rgba(255,255,255,.09);
+      border-radius: 12px;
+      padding: 13px;
+    }
+
+    .detail {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      font-size: 13px;
+    }
+
+    .detail:last-child {
       border-bottom: none;
     }
 
-
-    .service-item:hover,
-    .time-item:hover {
-      background: #f2f2f2;
-
-      padding-left: 18px;
+    .detail span:first-child {
+      color: #bbb;
     }
 
-
-    .service-item.selected,
-    .time-item.selected {
-      background: #111;
-
-      color: white;
-    }
-
-
-    .service-main {
-      display: flex;
-
-      align-items: center;
-
-      justify-content: space-between;
-
-      gap: 10px;
-    }
-
-
-    .service-name {
-      font-size: 13px;
-
+    .detail span:last-child {
+      text-align: right;
       font-weight: 700;
     }
 
-
-    .service-price {
-      font-size: 13px;
-
-      font-weight: 800;
-
-      white-space: nowrap;
-    }
-
-
-    .service-sub {
-      margin-top: 3px;
-
-      font-size: 11px;
-
-      color: #777;
-    }
-
-
-    .service-item.selected
-    .service-sub {
-      color: #ccc;
-    }
-
-
-    /* =========================
-       FECHA
-    ========================= */
-
-    .date-input {
-      width: 100%;
-
-      height: 48px;
-
-      padding:
-        0
-        13px;
-
-      border:
-        1.5px
-        solid
-        #ddd;
-
-      border-radius: 11px;
-
-      background: white;
-
+    .new-booking {
+      background: #fff;
       color: #111;
-
-      font-size: 14px;
-
-      outline: none;
-
-      transition:
-        .2s ease;
+      margin-top: 16px;
     }
-
-
-    .date-input:hover {
-      border-color: #999;
-    }
-
-
-    .date-input:focus {
-      border-color: #111;
-
-      box-shadow:
-        0 0 0 3px
-        rgba(0,0,0,.06);
-    }
-
-
-    /* =========================
-       INPUTS
-    ========================= */
-
-    .data-grid {
-      display: grid;
-
-      grid-template-columns:
-        1fr 1fr;
-
-      gap: 9px;
-    }
-
-
-    .input-label {
-      display: block;
-
-      margin-bottom: 6px;
-
-      font-size: 12px;
-
-      font-weight: 700;
-    }
-
-
-    .text-input {
-      width: 100%;
-
-      height: 47px;
-
-      padding:
-        0
-        13px;
-
-      border:
-        1.5px
-        solid
-        #ddd;
-
-      border-radius: 11px;
-
-      font-size: 14px;
-
-      outline: none;
-
-      transition:
-        .2s ease;
-    }
-
-
-    .text-input:hover {
-      border-color: #999;
-    }
-
-
-    .text-input:focus {
-      border-color: #111;
-
-      box-shadow:
-        0 0 0 3px
-        rgba(0,0,0,.06);
-    }
-
-
-    /* =========================
-       BOTONES
-    ========================= */
-
-    .main-button {
-      width: 100%;
-
-      height: 48px;
-
-      border: none;
-
-      border-radius: 11px;
-
-      background: #111;
-
-      color: white;
-
-      font-size: 14px;
-
-      font-weight: 800;
-
-      cursor: pointer;
-
-      transition:
-        .2s ease;
-
-      margin-top: 11px;
-    }
-
-
-    .main-button:hover {
-      background: #292929;
-
-      transform:
-        translateY(-1px);
-
-      box-shadow:
-        0 7px 15px
-        rgba(0,0,0,.15);
-    }
-
-
-    .main-button:active {
-      transform:
-        scale(.98);
-    }
-
-
-    .main-button:disabled {
-      opacity: .55;
-
-      cursor: not-allowed;
-
-      transform: none;
-
-      box-shadow: none;
-    }
-
-
-    /* =========================
-       RESUMEN
-    ========================= */
-
-    .selected-info {
-      display: none;
-
-      background: #f5f5f5;
-
-      border-radius: 11px;
-
-      padding: 12px;
-
-      margin-top: 10px;
-
-      font-size: 12px;
-
-      line-height: 1.6;
-    }
-
-
-    /* =========================
-       MENSAJE
-    ========================= */
-
-    .message {
-      display: none;
-
-      margin-top: 13px;
-
-      border-radius: 15px;
-
-      padding: 18px 13px;
-
-      text-align: center;
-    }
-
-
-    /* =========================
-       CONFIRMACIÓN
-    ========================= */
-
-    .success {
-      display: block;
-
-      background: #f2fff6;
-
-      border:
-        1px
-        solid
-        #55bd78;
-
-      color: #111;
-
-      animation:
-        confirmationIn
-        .3s
-        ease;
-    }
-
-
-    @keyframes confirmationIn {
-
-      from {
-        opacity: 0;
-
-        transform:
-          translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-
-        transform:
-          translateY(0);
-      }
-
-    }
-
-
-    .success-icon {
-      width: 43px;
-      height: 43px;
-
-      margin:
-        0
-        auto
-        9px;
-
-      border-radius: 50%;
-
-      background: #20a35a;
-
-      color: white;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: center;
-
-      font-size: 23px;
-
-      font-weight: 800;
-    }
-
-
-    .success-title {
-      font-size: 20px;
-
-      font-weight: 800;
-
-      margin-bottom: 4px;
-    }
-
-
-    .success-subtitle {
-      font-size: 12px;
-
-      color: #555;
-
-      margin-bottom: 15px;
-    }
-
-
-    .confirmation-grid {
-      display: grid;
-
-      grid-template-columns:
-        repeat(2, 1fr);
-
-      gap: 1px;
-
-      background: #d9eee1;
-
-      border-radius: 11px;
-
-      overflow: hidden;
-    }
-
-
-    .confirmation-item {
-      background: #f9fffb;
-
-      padding:
-        11px
-        5px;
-    }
-
-
-    .confirmation-label {
-      font-size: 9px;
-
-      color: #777;
-
-      margin-bottom: 3px;
-
-      font-weight: 700;
-    }
-
-
-    .confirmation-value {
-      font-size: 12px;
-
-      font-weight: 800;
-
-      word-break: break-word;
-    }
-
-
-    /* =========================
-       ERROR
-    ========================= */
 
     .error {
-      display: block;
-
-      background: #fff0f0;
-
-      border:
-        1px
-        solid
-        #e3a2a2;
-
-      color: #9d0000;
-
+      display: none;
+      background: #ffe8e8;
+      color: #a00000;
       border-radius: 11px;
-
       padding: 12px;
-
-      font-size: 12px;
-
-      line-height: 1.5;
-    }
-
-
-    /* =========================
-       LOADING
-    ========================= */
-
-    .loading {
-      text-align: center;
-
-      color: #777;
-
-      padding: 14px;
-
       font-size: 13px;
+      margin-top: 12px;
     }
 
-
-    /* =========================
-       FOOTER
-    ========================= */
+    .success-small {
+      display: none;
+      background: #e9f8ed;
+      color: #17652d;
+      border-radius: 11px;
+      padding: 12px;
+      font-size: 13px;
+      margin-top: 12px;
+    }
 
     .footer {
       text-align: center;
-
-      color: #777;
-
+      color: #888;
       font-size: 11px;
-
-      padding:
-        5px
-        10px
-        25px;
+      margin-top: 20px;
     }
 
-
-    /* =========================
-       CELULAR
-    ========================= */
-
-    @media (max-width: 600px) {
-
-      .header {
-        padding:
-          18px
-          12px;
-      }
-
-
-      .header h1 {
-        font-size: 24px;
-      }
-
-
+    @media (max-width: 360px) {
       .container {
-        width:
-          calc(100% - 18px);
-
-        margin-top: 11px;
+        width: 94%;
       }
-
 
       .card {
         padding: 15px;
-
-        border-radius: 15px;
       }
 
-
-      .section-title h2 {
-        font-size: 16px;
+      .header h1 {
+        font-size: 22px;
       }
-
-
-      .description {
-        margin-left: 39px;
-
-        font-size: 11px;
-      }
-
-
-      .data-grid {
-        grid-template-columns: 1fr;
-      }
-
     }
-
   </style>
-
 </head>
-
 
 <body>
 
+<div class="container">
 
-  <!-- =========================
-       HEADER
-  ========================= -->
+  <div class="header">
+    <h1>Kenier Barber Studio</h1>
+    <p>Reserva tu cita de forma rápida y sencilla</p>
+  </div>
 
-  <header class="header">
 
-    <h1>
-      Kenier Barber Studio
-    </h1>
+  <!-- RESERVA -->
+  <div class="card" id="mainCard">
 
-    <p>
-      RESERVA TU CITA
+    <h2>Reservar cita</h2>
+
+    <label for="service">Servicio</label>
+
+    <select id="service" class="service-select">
+      <option value="">Selecciona un servicio</option>
+      <option value="Pelado con estilo — $500">Pelado con estilo — $500</option>
+      <option value="Pelado clásico o al cero (personas mayores) — $300">
+        Pelado clásico o al cero (personas mayores) — $300
+      </option>
+      <option value="Pelado para niños (menores de 12 años) — $300">
+        Pelado para niños (menores de 12 años) — $300
+      </option>
+    </select>
+
+
+    <label for="date">Fecha</label>
+
+    <input
+      type="date"
+      id="date"
+    >
+
+
+    <label for="time">Horario</label>
+
+    <select id="time" class="time-select" disabled>
+      <option value="">Selecciona primero una fecha</option>
+    </select>
+
+    <div class="available-message" id="availableMessage"></div>
+
+  </div>
+
+
+  <!-- DATOS DEL CLIENTE -->
+  <div class="card booking-card" id="bookingCard">
+
+    <h2>Datos del cliente</h2>
+
+    <div class="selected-time" id="selectedTime">
+      Selecciona un horario
+    </div>
+
+    <label for="name">Nombre</label>
+
+    <input
+      type="text"
+      id="name"
+      placeholder="Escribe tu nombre"
+      autocomplete="name"
+    >
+
+
+    <label for="phone">Teléfono</label>
+
+    <input
+      type="tel"
+      id="phone"
+      placeholder="Ej. 52612345"
+      autocomplete="tel"
+    >
+
+
+    <button id="confirmButton">
+      Confirmar cita
+    </button>
+
+    <div class="error" id="errorMessage"></div>
+
+  </div>
+
+
+  <!-- CONFIRMACIÓN -->
+  <div class="confirmation" id="confirmationCard">
+
+    <div class="confirmation-icon">
+      ✓
+    </div>
+
+    <h2>¡Cita confirmada!</h2>
+
+    <p class="confirmation-subtitle">
+      Tu cita ha sido reservada correctamente.
     </p>
 
-  </header>
+    <div class="confirmation-details">
 
-
-
-  <main class="container">
-
-
-    <!-- =========================
-         1. SERVICIO
-    ========================= -->
-
-    <section class="card">
-
-      <div class="section-title">
-
-        <div class="number">
-          1
-        </div>
-
-        <h2>
-          Selecciona tu servicio
-        </h2>
-
+      <div class="detail">
+        <span>Cliente</span>
+        <span id="confirmationName"></span>
       </div>
 
-
-      <div class="description">
-        Todos los servicios incluyen arreglo de barba y cejas.
+      <div class="detail">
+        <span>Servicio</span>
+        <span id="confirmationService"></span>
       </div>
 
-
-      <div class="dropdown">
-
-        <button
-          type="button"
-          class="dropdown-button"
-          id="serviceButton"
-        >
-
-          <div class="dropdown-left">
-
-            <span class="dropdown-icon">
-              ✂️
-            </span>
-
-            <span id="serviceText">
-              Selecciona un servicio
-            </span>
-
-          </div>
-
-          <span class="dropdown-arrow">
-            ⌄
-          </span>
-
-        </button>
-
-
-        <div
-          class="dropdown-menu"
-          id="serviceMenu"
-        >
-
-          <button
-            type="button"
-            class="service-item"
-            data-service="Pelado con estilo — $500 pesos"
-          >
-
-            <div class="service-main">
-
-              <span class="service-name">
-                Pelado con estilo
-              </span>
-
-              <span class="service-price">
-                $500
-              </span>
-
-            </div>
-
-            <div class="service-sub">
-              Servicio completo
-            </div>
-
-          </button>
-
-
-          <button
-            type="button"
-            class="service-item"
-            data-service="Pelado clásico o al cero — $300 pesos"
-          >
-
-            <div class="service-main">
-
-              <span class="service-name">
-                Pelado clásico o al cero
-              </span>
-
-              <span class="service-price">
-                $300
-              </span>
-
-            </div>
-
-            <div class="service-sub">
-              Personas mayores
-            </div>
-
-          </button>
-
-
-          <button
-            type="button"
-            class="service-item"
-            data-service="Pelado para niños — $300 pesos"
-          >
-
-            <div class="service-main">
-
-              <span class="service-name">
-                Pelado para niños
-              </span>
-
-              <span class="service-price">
-                $300
-              </span>
-
-            </div>
-
-            <div class="service-sub">
-              Menores de 12 años
-            </div>
-
-          </button>
-
-        </div>
-
+      <div class="detail">
+        <span>Fecha</span>
+        <span id="confirmationDate"></span>
       </div>
 
-    </section>
-
-
-
-    <!-- =========================
-         2. FECHA
-    ========================= -->
-
-    <section class="card">
-
-      <div class="section-title">
-
-        <div class="number">
-          2
-        </div>
-
-        <h2>
-          Selecciona la fecha
-        </h2>
-
+      <div class="detail">
+        <span>Hora</span>
+        <span id="confirmationTime"></span>
       </div>
 
+    </div>
 
-      <input
-        type="date"
-        id="date"
-        class="date-input"
-      >
+    <button class="new-booking" id="newBookingButton">
+      Reservar otra cita
+    </button>
 
+  </div>
 
-      <button
-        type="button"
-        id="loadButton"
-        class="main-button"
-      >
-        Ver horarios disponibles
-      </button>
 
-    </section>
+  <div class="footer">
+    Kenier Barber Studio · Todos los servicios incluyen arreglo de barba y cejas
+  </div>
 
+</div>
 
 
-    <!-- =========================
-         3. HORARIO
-    ========================= -->
+<script>
 
-    <section
-      class="card"
-      id="scheduleCard"
-      style="display:none;"
-    >
+  /*
+    ==========================================================
+    CONFIGURACIÓN
+    ==========================================================
+  */
 
-      <div class="section-title">
+  const API_URL =
+    "https://kenier-barber-studio.pages.dev/api/appointments";
 
-        <div class="number">
-          3
-        </div>
 
-        <h2>
-          Selecciona el horario
-        </h2>
+  /*
+    ==========================================================
+    ELEMENTOS
+    ==========================================================
+  */
 
-      </div>
+  const serviceSelect =
+    document.getElementById("service");
 
+  const dateInput =
+    document.getElementById("date");
 
-      <div class="dropdown">
+  const timeSelect =
+    document.getElementById("time");
 
-        <button
-          type="button"
-          class="dropdown-button"
-          id="timeButton"
-        >
+  const bookingCard =
+    document.getElementById("bookingCard");
 
-          <div class="dropdown-left">
+  const selectedTime =
+    document.getElementById("selectedTime");
 
-            <span class="dropdown-icon">
-              🕐
-            </span>
+  const nameInput =
+    document.getElementById("name");
 
-            <span id="timeText">
-              Selecciona un horario disponible
-            </span>
+  const phoneInput =
+    document.getElementById("phone");
 
-          </div>
+  const confirmButton =
+    document.getElementById("confirmButton");
 
-          <span class="dropdown-arrow">
-            ⌄
-          </span>
+  const errorMessage =
+    document.getElementById("errorMessage");
 
-        </button>
+  const availableMessage =
+    document.getElementById("availableMessage");
 
+  const confirmationCard =
+    document.getElementById("confirmationCard");
 
-        <div
-          class="dropdown-menu"
-          id="timeMenu"
-        ></div>
+  const confirmationName =
+    document.getElementById("confirmationName");
 
-      </div>
+  const confirmationService =
+    document.getElementById("confirmationService");
 
-    </section>
+  const confirmationDate =
+    document.getElementById("confirmationDate");
 
+  const confirmationTime =
+    document.getElementById("confirmationTime");
 
+  const newBookingButton =
+    document.getElementById("newBookingButton");
 
-    <!-- =========================
-         4. DATOS
-    ========================= -->
 
-    <section
-      class="card"
-      id="bookingCard"
-      style="display:none;"
-    >
+  /*
+    ==========================================================
+    HORARIOS
+    ==========================================================
+  */
 
-      <div class="section-title">
-
-        <div class="number">
-          4
-        </div>
-
-        <h2>
-          Tus datos
-        </h2>
-
-      </div>
-
-
-      <div class="data-grid">
-
-        <div>
-
-          <label
-            class="input-label"
-            for="name"
-          >
-            Nombre
-          </label>
-
-          <input
-            type="text"
-            id="name"
-            class="text-input"
-            placeholder="Tu nombre"
-            autocomplete="name"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label
-            class="input-label"
-            for="phone"
-          >
-            Teléfono
-          </label>
-
-          <input
-            type="tel"
-            id="phone"
-            class="text-input"
-            placeholder="Tu teléfono"
-            autocomplete="tel"
-          >
-
-        </div>
-
-      </div>
-
-
-      <div
-        id="selectedInfo"
-        class="selected-info"
-      ></div>
-
-
-      <button
-        type="button"
-        id="bookButton"
-        class="main-button"
-      >
-        ✓ &nbsp; Confirmar cita
-      </button>
-
-    </section>
-
-
-
-    <!-- =========================
-         CONFIRMACIÓN
-         
-         ESTA TARJETA ESTÁ
-         FUERA DE bookingCard
-         PARA QUE NUNCA SE OCULTE
-         AL ACTUALIZAR HORARIOS.
-    ========================= -->
-
-    <section
-      id="confirmationCard"
-      class="message"
-    ></section>
-
-
-  </main>
-
-
-  <footer class="footer">
-
-    Kenier Barber Studio
-    ·
-    Gracias por preferirnos
-
-  </footer>
-
-
-
-  <script>
-
-
-    /* =========================
-       API
-    ========================= */
-
-    const API_URL =
-      "https://kenier-barber-studio.pages.dev/api/appointments";
-
-
-    /* =========================
-       HORARIOS
-    ========================= */
-
-    const times = [
-      "08:00",
-      "09:00",
-      "10:00",
-      "11:00",
-      "12:00",
-      "13:00",
-      "14:00",
-      "15:00",
-      "16:00",
-      "17:00",
-      "18:00"
-    ];
-
-
-    /* =========================
-       ELEMENTOS
-    ========================= */
-
-    const dateInput =
-      document.getElementById("date");
-
-    const loadButton =
-      document.getElementById("loadButton");
-
-    const scheduleCard =
-      document.getElementById("scheduleCard");
-
-    const bookingCard =
-      document.getElementById("bookingCard");
-
-    const bookButton =
-      document.getElementById("bookButton");
-
-    const nameInput =
-      document.getElementById("name");
-
-    const phoneInput =
-      document.getElementById("phone");
-
-    const selectedInfo =
-      document.getElementById("selectedInfo");
-
-    const confirmationCard =
-      document.getElementById("confirmationCard");
-
-
-    /* =========================
-       SERVICIO
-    ========================= */
-
-    const serviceButton =
-      document.getElementById("serviceButton");
-
-    const serviceMenu =
-      document.getElementById("serviceMenu");
-
-    const serviceText =
-      document.getElementById("serviceText");
-
-
-    let selectedService = null;
-
-    let selectedTime = null;
-
-
-    /* =========================
-       FECHA MÍNIMA
-    ========================= */
-
-    const today =
-      new Date()
-        .toISOString()
-        .split("T")[0];
-
-    dateInput.min =
-      today;
-
-
-    /* =========================
-       SERVICIO DROPDOWN
-    ========================= */
-
-    serviceButton.addEventListener(
-      "click",
-      function(event) {
-
-        event.stopPropagation();
-
-        const isOpen =
-          serviceMenu.classList.toggle(
-            "open"
-          );
-
-        serviceButton.classList.toggle(
-          "active",
-          isOpen
-        );
-
+  const allTimes = [
+    "08:00",
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00"
+  ];
+
+
+  /*
+    ==========================================================
+    HORA ACTUAL DE CUBA
+    ==========================================================
+  */
+
+  function getCubaNow() {
+
+    const formatter = new Intl.DateTimeFormat(
+      "en-CA",
+      {
+        timeZone: "America/Havana",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
       }
     );
 
+    const parts =
+      formatter.formatToParts(new Date());
 
-    document
-      .querySelectorAll(".service-item")
-      .forEach(item => {
+    const values = {};
 
-        item.addEventListener(
-          "click",
-          function(event) {
+    parts.forEach(part => {
+      if (part.type !== "literal") {
+        values[part.type] = part.value;
+      }
+    });
 
-            event.stopPropagation();
+    return {
+      date:
+        `${values.year}-${values.month}-${values.day}`,
 
+      hour:
+        Number(values.hour),
 
-            selectedService =
-              this.dataset.service;
-
-
-            serviceText.textContent =
-              getShortServiceName(
-                selectedService
-              );
-
-
-            document
-              .querySelectorAll(
-                ".service-item"
-              )
-              .forEach(item => {
-
-                item.classList.remove(
-                  "selected"
-                );
-
-              });
+      minute:
+        Number(values.minute)
+    };
+  }
 
 
-            this.classList.add(
-              "selected"
-            );
+  /*
+    ==========================================================
+    FECHA MÍNIMA
+    ==========================================================
+  */
+
+  function setMinimumDate() {
+
+    const cubaNow = getCubaNow();
+
+    dateInput.min = cubaNow.date;
+
+    /*
+      Si por alguna razón el teléfono tenía
+      una fecha anterior guardada, la corregimos.
+    */
+
+    if (
+      !dateInput.value ||
+      dateInput.value < cubaNow.date
+    ) {
+      dateInput.value = cubaNow.date;
+    }
+  }
 
 
-            serviceMenu.classList.remove(
-              "open"
-            );
+  /*
+    ==========================================================
+    COMPROBAR SI UN HORARIO YA PASÓ
+    ==========================================================
+  */
 
-            serviceButton.classList.remove(
-              "active"
-            );
+  function isTimePast(time) {
+
+    const cubaNow = getCubaNow();
+
+    if (dateInput.value !== cubaNow.date) {
+      return false;
+    }
+
+    const [hour, minute] =
+      time.split(":").map(Number);
+
+    const currentMinutes =
+      cubaNow.hour * 60 + cubaNow.minute;
+
+    const appointmentMinutes =
+      hour * 60 + minute;
+
+    return appointmentMinutes <= currentMinutes;
+  }
 
 
-            updateSelectedInfo();
+  /*
+    ==========================================================
+    FORMATEAR FECHA
+    ==========================================================
+  */
 
+  function formatDate(dateString) {
+
+    const date =
+      new Date(dateString + "T12:00:00");
+
+    return date.toLocaleDateString(
+      "es-ES",
+      {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }
+    );
+  }
+
+
+  /*
+    ==========================================================
+    FORMATEAR HORA
+    ==========================================================
+  */
+
+  function formatTime(time) {
+
+    const [hourString, minute] =
+      time.split(":");
+
+    let hour =
+      Number(hourString);
+
+    const suffix =
+      hour >= 12 ? "PM" : "AM";
+
+    hour =
+      hour % 12 || 12;
+
+    return `${hour}:${minute} ${suffix}`;
+  }
+
+
+  /*
+    ==========================================================
+    CARGAR HORARIOS DISPONIBLES
+    ==========================================================
+  */
+
+  async function refreshTimes(date) {
+
+    timeSelect.innerHTML =
+      '<option value="">Cargando horarios...</option>';
+
+    timeSelect.disabled = true;
+
+    bookingCard.style.display = "none";
+
+    availableMessage.textContent = "";
+
+    try {
+
+      /*
+        Evita que el navegador utilice
+        una respuesta vieja.
+      */
+
+      const response =
+        await fetch(
+          `${API_URL}?date=${encodeURIComponent(date)}&t=${Date.now()}`,
+          {
+            method: "GET",
+            cache: "no-store"
           }
         );
+
+
+      const rawText =
+        await response.text();
+
+      let appointments = [];
+
+      try {
+        appointments =
+          JSON.parse(rawText);
+      } catch (e) {
+        throw new Error(
+          "Respuesta inválida del servidor."
+        );
+      }
+
+
+      if (!response.ok) {
+        throw new Error(
+          appointments.error ||
+          "No se pudieron obtener los horarios."
+        );
+      }
+
+
+      const occupied =
+        new Set(
+          appointments.map(
+            appointment =>
+              appointment.appointment_time
+          )
+        );
+
+
+      timeSelect.innerHTML =
+        '<option value="">Selecciona un horario</option>';
+
+
+      let availableCount = 0;
+
+
+      allTimes.forEach(time => {
+
+        /*
+          No mostrar horarios ya reservados.
+        */
+
+        if (occupied.has(time)) {
+          return;
+        }
+
+
+        /*
+          Si es HOY, tampoco mostrar
+          horarios que ya pasaron.
+        */
+
+        if (isTimePast(time)) {
+          return;
+        }
+
+
+        const option =
+          document.createElement("option");
+
+        option.value = time;
+
+        option.textContent =
+          formatTime(time);
+
+        timeSelect.appendChild(option);
+
+        availableCount++;
 
       });
 
 
-    function getShortServiceName(
-      service
-    ) {
+      if (availableCount === 0) {
 
-      if (
-        service.includes(
-          "Pelado con estilo"
-        )
-      ) {
+        timeSelect.innerHTML =
+          '<option value="">No quedan horarios disponibles</option>';
 
-        return "Pelado con estilo — $500";
+        timeSelect.disabled = true;
 
+        availableMessage.textContent =
+          "No quedan horarios disponibles para esta fecha.";
+
+      } else {
+
+        timeSelect.disabled = false;
+
+        availableMessage.textContent =
+          `${availableCount} horario${availableCount === 1 ? "" : "s"} disponible${availableCount === 1 ? "" : "s"}.`;
       }
 
 
-      if (
-        service.includes(
-          "Pelado clásico"
-        )
-      ) {
+    } catch (error) {
 
-        return "Pelado clásico o al cero — $300";
+      timeSelect.innerHTML =
+        '<option value="">No se pudieron cargar los horarios</option>';
 
-      }
+      timeSelect.disabled = true;
 
-
-      if (
-        service.includes(
-          "Pelado para niños"
-        )
-      ) {
-
-        return "Pelado para niños — $300";
-
-      }
-
-
-      return service;
-
+      availableMessage.textContent =
+        error.message ||
+        "Error conectando con el servidor.";
     }
+  }
 
 
+  /*
+    ==========================================================
+    CAMBIO DE FECHA
+    ==========================================================
+  */
 
-    /* =========================
-       HORARIO DROPDOWN
-    ========================= */
+  dateInput.addEventListener(
+    "change",
+    async () => {
 
-    const timeButton =
-      document.getElementById("timeButton");
+      /*
+        Volvemos a comprobar la fecha.
+        Esto evita que alguien manipule
+        el calendario manualmente.
+      */
 
-    const timeMenu =
-      document.getElementById("timeMenu");
+      const cubaNow =
+        getCubaNow();
 
-    const timeText =
-      document.getElementById("timeText");
+      if (dateInput.value < cubaNow.date) {
 
+        dateInput.value =
+          cubaNow.date;
 
-    timeButton.addEventListener(
-      "click",
-      function(event) {
-
-        event.stopPropagation();
-
-
-        if (
-          timeMenu.children.length === 0
-        ) {
-
-          return;
-
-        }
-
-
-        const isOpen =
-          timeMenu.classList.toggle(
-            "open"
-          );
-
-
-        timeButton.classList.toggle(
-          "active",
-          isOpen
+        alert(
+          "No puedes seleccionar una fecha pasada."
         );
-
-      }
-    );
-
-
-
-    /* =========================
-       CERRAR MENÚS
-    ========================= */
-
-    document.addEventListener(
-      "click",
-      function() {
-
-        serviceMenu.classList.remove(
-          "open"
-        );
-
-        serviceButton.classList.remove(
-          "active"
-        );
-
-
-        timeMenu.classList.remove(
-          "open"
-        );
-
-        timeButton.classList.remove(
-          "active"
-        );
-
-      }
-    );
-
-
-
-    /* =========================
-       FORMATO HORA
-    ========================= */
-
-    function formatTime(time) {
-
-      const [hour, minute] =
-        time.split(":");
-
-
-      let h =
-        parseInt(hour);
-
-
-      const ampm =
-        h >= 12
-          ? "PM"
-          : "AM";
-
-
-      h =
-        h % 12;
-
-
-      if (h === 0) {
-        h = 12;
       }
 
 
-      return `${h}:${minute} ${ampm}`;
+      confirmationCard.style.display =
+        "none";
 
+      await refreshTimes(
+        dateInput.value
+      );
     }
+  );
 
 
+  /*
+    ==========================================================
+    CAMBIO DE HORARIO
+    ==========================================================
+  */
 
-    /* =========================
-       FORMATO FECHA
-    ========================= */
+  timeSelect.addEventListener(
+    "change",
+    () => {
 
-    function formatDate(date) {
-
-      const parts =
-        date.split("-");
-
-
-      if (
-        parts.length !== 3
-      ) {
-
-        return date;
-
-      }
+      errorMessage.style.display =
+        "none";
 
 
-      const year =
-        parts[0];
-
-      const month =
-        parseInt(
-          parts[1],
-          10
-        );
-
-      const day =
-        parseInt(
-          parts[2],
-          10
-        );
-
-
-      const months = [
-
-        "enero",
-        "febrero",
-        "marzo",
-        "abril",
-        "mayo",
-        "junio",
-        "julio",
-        "agosto",
-        "septiembre",
-        "octubre",
-        "noviembre",
-        "diciembre"
-
-      ];
-
-
-      return `
-        ${day}
-        de
-        ${months[month - 1]}
-        de
-        ${year}
-      `;
-
-    }
-
-
-
-    /* =========================
-       INFORMACIÓN SELECCIONADA
-    ========================= */
-
-    function updateSelectedInfo() {
-
-      if (
-        !selectedService ||
-        !selectedTime
-      ) {
-
-        selectedInfo.style.display =
-          "none";
-
-        return;
-
-      }
-
-
-      selectedInfo.innerHTML = `
-
-        <strong>Servicio:</strong>
-        ${escapeHtml(
-          getShortServiceName(
-            selectedService
-          )
-        )}
-
-        <br>
-
-        <strong>Horario:</strong>
-        ${formatTime(
-          selectedTime
-        )}
-
-      `;
-
-
-      selectedInfo.style.display =
-        "block";
-
-    }
-
-
-
-    /* =========================
-       OCULTAR CONFIRMACIÓN
-       SOLO CUANDO EL CLIENTE
-       CAMBIA DE FECHA
-    ========================= */
-
-    dateInput.addEventListener(
-      "change",
-      function() {
-
-        confirmationCard.style.display =
-          "none";
-
-        confirmationCard.innerHTML =
-          "";
-
-
-        scheduleCard.style.display =
-          "none";
-
+      if (!timeSelect.value) {
 
         bookingCard.style.display =
           "none";
 
-
-        selectedTime =
-          null;
-
-
-        timeText.textContent =
-          "Selecciona un horario disponible";
-
-
-        timeMenu.innerHTML =
-          "";
-
-
-        selectedInfo.style.display =
-          "none";
-
+        return;
       }
-    );
 
 
+      selectedTime.textContent =
+        `Horario seleccionado: ${formatTime(timeSelect.value)}`;
 
-    /* =========================
-       CARGAR HORARIOS
-       
-       IMPORTANTE:
-       Esta función NO OCULTA
-       bookingCard.
-       
-       Así después de reservar
-       podemos actualizar los
-       horarios sin desaparecer
-       la confirmación.
-    ========================= */
 
-    async function refreshTimes(
-      date
-    ) {
+      bookingCard.style.display =
+        "block";
 
-      timeMenu.innerHTML =
-        `<div class="loading">
-          Cargando horarios...
-        </div>`;
+
+      /*
+        Llevar al usuario a la sección
+        de datos del cliente.
+      */
+
+      setTimeout(() => {
+
+        bookingCard.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }, 100);
+
+    }
+  );
+
+
+  /*
+    ==========================================================
+    CONFIRMAR CITA
+    ==========================================================
+  */
+
+  confirmButton.addEventListener(
+    "click",
+    async () => {
+
+      errorMessage.style.display =
+        "none";
+
+
+      const service =
+        serviceSelect.value;
+
+      const date =
+        dateInput.value;
+
+      const time =
+        timeSelect.value;
+
+      const name =
+        nameInput.value.trim();
+
+      const phone =
+        phoneInput.value.trim();
+
+
+      /*
+        Validaciones
+      */
+
+      if (!service) {
+
+        showError(
+          "Selecciona el servicio que deseas."
+        );
+
+        return;
+      }
+
+
+      if (!date) {
+
+        showError(
+          "Selecciona una fecha."
+        );
+
+        return;
+      }
+
+
+      if (!time) {
+
+        showError(
+          "Selecciona un horario."
+        );
+
+        return;
+      }
+
+
+      if (!name) {
+
+        showError(
+          "Escribe tu nombre."
+        );
+
+        return;
+      }
+
+
+      if (!phone) {
+
+        showError(
+          "Escribe tu número de teléfono."
+        );
+
+        return;
+      }
+
+
+      /*
+        Comprobar nuevamente que la fecha
+        no sea anterior a hoy.
+      */
+
+      const cubaNow =
+        getCubaNow();
+
+
+      if (date < cubaNow.date) {
+
+        showError(
+          "No puedes reservar una cita para una fecha pasada."
+        );
+
+        setMinimumDate();
+
+        await refreshTimes(
+          dateInput.value
+        );
+
+        return;
+      }
+
+
+      /*
+        Comprobar nuevamente que la hora
+        no haya pasado si es hoy.
+      */
+
+      if (isTimePast(time)) {
+
+        showError(
+          "Ese horario ya pasó. Selecciona otro."
+        );
+
+        await refreshTimes(date);
+
+        return;
+      }
+
+
+      /*
+        Desactivar botón para evitar
+        doble reserva.
+      */
+
+      confirmButton.disabled = true;
+
+      confirmButton.textContent =
+        "Confirmando...";
 
 
       try {
 
         const response =
           await fetch(
-            `${API_URL}?date=${encodeURIComponent(date)}`,
+            API_URL,
             {
-              method: "GET",
-              mode: "cors",
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "text/plain;charset=UTF-8"
+              },
+
+              body: JSON.stringify({
+                date: date,
+                time: time,
+                name: name,
+                phone: phone,
+                service: service
+              }),
+
               cache: "no-store"
             }
           );
 
 
-        const raw =
+        const rawText =
           await response.text();
 
 
-        let data;
-
+        let result;
 
         try {
 
-          data =
-            JSON.parse(raw);
+          result =
+            JSON.parse(rawText);
 
-        } catch {
+        } catch (e) {
 
           throw new Error(
-            "Respuesta inválida del servidor."
+            "El servidor devolvió una respuesta inválida."
           );
-
         }
 
+
+        /*
+          Si el horario fue ocupado
+          por otra persona.
+        */
 
         if (!response.ok) {
 
           throw new Error(
-            data.error ||
-            "No se pudieron cargar las citas."
+            result.error ||
+            "No se pudo confirmar la cita."
           );
-
         }
 
 
-        const bookedTimes =
-          new Set(
-            data.map(
-              appointment =>
-                appointment.appointment_time
-            )
+        if (!result.success) {
+
+          throw new Error(
+            result.error ||
+            "No se pudo confirmar la cita."
           );
-
-
-        const availableTimes =
-          times.filter(
-            time =>
-              !bookedTimes.has(time)
-          );
-
-
-        timeMenu.innerHTML =
-          "";
-
-
-        if (
-          availableTimes.length === 0
-        ) {
-
-          timeMenu.innerHTML = `
-            <div class="loading">
-              No quedan horarios disponibles
-              para este día.
-            </div>
-          `;
-
-          return;
-
         }
 
 
-        availableTimes.forEach(
-          time => {
+        /*
+          ==============================================
+          ¡CITA CONFIRMADA!
+          ==============================================
+        */
 
-            const item =
-              document.createElement(
-                "button"
-              );
+        confirmationName.textContent =
+          name;
 
+        confirmationService.textContent =
+          service;
 
-            item.type =
-              "button";
+        confirmationDate.textContent =
+          formatDate(date);
 
-
-            item.className =
-              "time-item";
-
-
-            item.textContent =
-              formatTime(time);
+        confirmationTime.textContent =
+          formatTime(time);
 
 
-            item.addEventListener(
-              "click",
-              function(event) {
+        /*
+          MOSTRAR CONFIRMACIÓN
+          Y NO OCULTARLA DESPUÉS.
+        */
 
-                event.stopPropagation();
-
-
-                document
-                  .querySelectorAll(
-                    ".time-item"
-                  )
-                  .forEach(
-                    x =>
-                      x.classList.remove(
-                        "selected"
-                      )
-                  );
-
-
-                this.classList.add(
-                  "selected"
-                );
-
-
-                selectedTime =
-                  time;
-
-
-                timeText.textContent =
-                  formatTime(time);
-
-
-                timeMenu.classList.remove(
-                  "open"
-                );
-
-
-                timeButton.classList.remove(
-                  "active"
-                );
-
-
-                bookingCard.style.display =
-                  "block";
-
-
-                updateSelectedInfo();
-
-
-                /*
-                  Si el cliente vuelve a
-                  seleccionar otro horario,
-                  quitamos la confirmación
-                  anterior para no confundir.
-                */
-
-                confirmationCard.style.display =
-                  "none";
-
-
-                confirmationCard.innerHTML =
-                  "";
-
-
-                setTimeout(
-                  function() {
-
-                    bookingCard.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start"
-                    });
-
-                  },
-                  80
-                );
-
-              }
-            );
-
-
-            timeMenu.appendChild(
-              item
-            );
-
-          }
-        );
-
-
-      } catch(error) {
-
-        timeMenu.innerHTML = `
-          <div class="error">
-            ❌ ${escapeHtml(
-              error.message
-            )}
-          </div>
-        `;
-
-      }
-
-    }
-
-
-
-    /* =========================
-       BOTÓN VER HORARIOS
-    ========================= */
-
-    loadButton.addEventListener(
-      "click",
-      async function() {
-
-        const date =
-          dateInput.value;
-
-
-        if (!date) {
-
-          alert(
-            "Selecciona una fecha."
-          );
-
-          return;
-
-        }
-
-
-        loadButton.disabled =
-          true;
-
-
-        loadButton.textContent =
-          "Cargando horarios...";
-
-
-        scheduleCard.style.display =
+        confirmationCard.style.display =
           "block";
 
+
+        /*
+          Ocultar formulario de datos.
+        */
 
         bookingCard.style.display =
           "none";
 
 
+        /*
+          Volver a actualizar horarios.
+          Esto NO oculta la confirmación.
+        */
+
+        await refreshTimes(date);
+
+
+        /*
+          Volver a mostrar la confirmación
+          por seguridad después de refreshTimes.
+        */
+
         confirmationCard.style.display =
-          "none";
+          "block";
 
 
-        confirmationCard.innerHTML =
-          "";
+        /*
+          Subir hasta la confirmación.
+        */
 
-
-        selectedTime =
-          null;
-
-
-        timeText.textContent =
-          "Selecciona un horario disponible";
-
-
-        timeMenu.classList.remove(
-          "open"
-        );
-
-
-        await refreshTimes(
-          date
-        );
-
-
-        loadButton.disabled =
-          false;
-
-
-        loadButton.textContent =
-          "Ver horarios disponibles";
-
-
-        scheduleCard.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-
-      }
-    );
-
-
-
-    /* =========================
-       CONFIRMAR CITA
-    ========================= */
-
-    bookButton.addEventListener(
-      "click",
-      async function() {
-
-
-        const date =
-          dateInput.value;
-
-
-        const name =
-          nameInput.value.trim();
-
-
-        const phone =
-          phoneInput.value.trim();
-
-
-
-        /* VALIDAR SERVICIO */
-
-        if (!selectedService) {
-
-          showError(
-            "❌ Selecciona el servicio que deseas."
-          );
-
-          return;
-
-        }
-
-
-
-        /* VALIDAR FECHA */
-
-        if (!date) {
-
-          showError(
-            "❌ Selecciona una fecha."
-          );
-
-          return;
-
-        }
-
-
-
-        /* VALIDAR HORA */
-
-        if (!selectedTime) {
-
-          showError(
-            "❌ Selecciona un horario."
-          );
-
-          return;
-
-        }
-
-
-
-        /* VALIDAR NOMBRE */
-
-        if (!name) {
-
-          showError(
-            "❌ Escribe tu nombre."
-          );
-
-          nameInput.focus();
-
-          return;
-
-        }
-
-
-
-        /* VALIDAR TELÉFONO */
-
-        if (!phone) {
-
-          showError(
-            "❌ Escribe tu teléfono."
-          );
-
-          phoneInput.focus();
-
-          return;
-
-        }
-
-
-
-        /* RESERVANDO */
-
-        bookButton.disabled =
-          true;
-
-
-        bookButton.textContent =
-          "Reservando...";
-
-
-
-        try {
-
-
-          const reservedService =
-            selectedService;
-
-
-          const reservedTime =
-            selectedTime;
-
-
-          const reservedDate =
-            date;
-
-
-          const reservedName =
-            name;
-
-
-          const reservedPhone =
-            phone;
-
-
-
-          const response =
-            await fetch(
-              API_URL,
-              {
-
-                method: "POST",
-
-                mode: "cors",
-
-                headers: {
-
-                  "Content-Type":
-                    "text/plain;charset=UTF-8"
-
-                },
-
-                body:
-                  JSON.stringify({
-
-                    date:
-                      reservedDate,
-
-                    time:
-                      reservedTime,
-
-                    name:
-                      reservedName,
-
-                    phone:
-                      reservedPhone,
-
-                    service:
-                      reservedService
-
-                  })
-
-              }
-            );
-
-
-
-          const raw =
-            await response.text();
-
-
-          let data;
-
-
-          try {
-
-            data =
-              JSON.parse(raw);
-
-          } catch {
-
-            throw new Error(
-              "Respuesta inválida del servidor."
-            );
-
-          }
-
-
-
-          if (!response.ok) {
-
-            throw new Error(
-              data.error ||
-              "No se pudo reservar la cita."
-            );
-
-          }
-
-
-
-          /* =========================
-             MOSTRAR CONFIRMACIÓN
-          ========================= */
-
-          confirmationCard.className =
-            "message success";
-
-
-          confirmationCard.innerHTML = `
-
-            <div class="success-icon">
-              ✓
-            </div>
-
-
-            <div class="success-title">
-              ¡Cita confirmada!
-            </div>
-
-
-            <div class="success-subtitle">
-              Tu cita ha sido reservada correctamente.
-            </div>
-
-
-            <div class="confirmation-grid">
-
-
-              <div class="confirmation-item">
-
-                <div class="confirmation-label">
-                  SERVICIO
-                </div>
-
-                <div class="confirmation-value">
-                  ${escapeHtml(
-                    getShortServiceName(
-                      reservedService
-                    )
-                  )}
-                </div>
-
-              </div>
-
-
-
-              <div class="confirmation-item">
-
-                <div class="confirmation-label">
-                  FECHA
-                </div>
-
-                <div class="confirmation-value">
-                  ${escapeHtml(
-                    formatDate(
-                      reservedDate
-                    )
-                  )}
-                </div>
-
-              </div>
-
-
-
-              <div class="confirmation-item">
-
-                <div class="confirmation-label">
-                  HORARIO
-                </div>
-
-                <div class="confirmation-value">
-                  ${formatTime(
-                    reservedTime
-                  )}
-                </div>
-
-              </div>
-
-
-
-              <div class="confirmation-item">
-
-                <div class="confirmation-label">
-                  CLIENTE
-                </div>
-
-                <div class="confirmation-value">
-                  ${escapeHtml(
-                    reservedName
-                  )}
-                </div>
-
-              </div>
-
-
-
-              <div class="confirmation-item">
-
-                <div class="confirmation-label">
-                  TELÉFONO
-                </div>
-
-                <div class="confirmation-value">
-                  ${escapeHtml(
-                    reservedPhone
-                  )}
-                </div>
-
-              </div>
-
-
-            </div>
-
-
-            <div
-              style="
-                margin-top:14px;
-                font-size:11px;
-                color:#666;
-              "
-            >
-              Gracias por preferir
-              <strong>
-                Kenier Barber Studio
-              </strong>.
-            </div>
-
-          `;
-
-
-          confirmationCard.style.display =
-            "block";
-
-
-
-          /* =========================
-             LIMPIAR DATOS
-          ========================= */
-
-          selectedTime =
-            null;
-
-
-          timeText.textContent =
-            "Selecciona un horario disponible";
-
-
-          selectedInfo.style.display =
-            "none";
-
-
-          nameInput.value =
-            "";
-
-
-          phoneInput.value =
-            "";
-
-
-
-          /*
-            AQUÍ ESTÁ LA DIFERENCIA:
-
-            Actualizamos solamente
-            los horarios.
-
-            NO escondemos bookingCard.
-
-            NO escondemos confirmationCard.
-          */
-
-          await refreshTimes(
-            reservedDate
-          );
-
-
-
-          /*
-            Volvemos a mostrar
-            la confirmación por si
-            el navegador actualizó
-            algún elemento visual.
-          */
-
-          confirmationCard.style.display =
-            "block";
-
-
+        setTimeout(() => {
 
           confirmationCard.scrollIntoView({
             behavior: "smooth",
-            block: "center"
+            block: "start"
           });
 
+        }, 150);
 
 
-        } catch(error) {
+      } catch (error) {
 
+        showError(
+          error.message ||
+          "No se pudo confirmar la cita."
+        );
 
-          showError(
-            `❌ ${error.message}`
-          );
+      } finally {
 
+        confirmButton.disabled =
+          false;
 
-        } finally {
-
-          bookButton.disabled =
-            false;
-
-
-          bookButton.textContent =
-            "✓   Confirmar cita";
-
-        }
-
+        confirmButton.textContent =
+          "Confirmar cita";
       }
-    );
+
+    }
+  );
 
 
+  /*
+    ==========================================================
+    MOSTRAR ERROR
+    ==========================================================
+  */
 
-    /* =========================
-       ERROR
-    ========================= */
+  function showError(message) {
 
-    function showError(
-      text
-    ) {
+    errorMessage.textContent =
+      message;
 
-      confirmationCard.className =
-        "message error";
+    errorMessage.style.display =
+      "block";
 
 
-      confirmationCard.innerHTML =
-        text;
+    errorMessage.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }
 
+
+  /*
+    ==========================================================
+    NUEVA CITA
+    ==========================================================
+  */
+
+  newBookingButton.addEventListener(
+    "click",
+    async () => {
 
       confirmationCard.style.display =
-        "block";
+        "none";
+
+      bookingCard.style.display =
+        "none";
+
+      serviceSelect.value =
+        "";
+
+      nameInput.value =
+        "";
+
+      phoneInput.value =
+        "";
+
+      timeSelect.value =
+        "";
+
+      errorMessage.style.display =
+        "none";
 
 
-      confirmationCard.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
+      setMinimumDate();
+
+      await refreshTimes(
+        dateInput.value
+      );
+
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
       });
 
     }
+  );
 
 
+  /*
+    ==========================================================
+    INICIALIZACIÓN
+    ==========================================================
+  */
 
-    /* =========================
-       ESCAPE HTML
-    ========================= */
+  setMinimumDate();
 
-    function escapeHtml(
-      text
-    ) {
+  refreshTimes(
+    dateInput.value
+  );
 
-      const div =
-        document.createElement(
-          "div"
+
+  /*
+    ==========================================================
+    ACTUALIZAR AUTOMÁTICAMENTE LOS HORARIOS
+    CADA 60 SEGUNDOS
+    ==========================================================
+  */
+
+  setInterval(
+    async () => {
+
+      /*
+        Esto es especialmente importante
+        si alguien deja la página abierta
+        durante mucho tiempo.
+      */
+
+      setMinimumDate();
+
+      if (dateInput.value) {
+
+        await refreshTimes(
+          dateInput.value
         );
 
+      }
 
-      div.textContent =
-        text ?? "";
+    },
+    60000
+  );
 
-
-      return div.innerHTML;
-
-    }
-
-  </script>
+</script>
 
 </body>
-
 </html>
