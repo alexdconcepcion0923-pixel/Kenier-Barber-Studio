@@ -8,343 +8,181 @@ const CORS_HEADERS = {
   "Access-Control-Max-Age": "86400"
 };
 
-
-function json(data, status = 200) {
-
-  return new Response(
-    JSON.stringify(data),
-    {
-      status,
-      headers: {
-        "Content-Type": "application/json",
-        ...CORS_HEADERS
-      }
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      ...CORS_HEADERS,
+      "Content-Type": "application/json; charset=UTF-8"
     }
-  );
-
+  });
 }
 
-
-/* =========================
-   CORS / PREFLIGHT
-========================= */
-
 export async function onRequestOptions() {
-
   return new Response(null, {
     status: 204,
     headers: CORS_HEADERS
   });
-
 }
 
-
-/* =========================
-   GET
-========================= */
-
 export async function onRequestGet(context) {
-
-  const { env } = context;
-
-  const db = env.DB;
-
-
-  if (!db) {
-
-    return json(
-      {
-        error: "D1 no está conectado"
-      },
-      500
-    );
-
-  }
-
-
-  const url =
-    new URL(context.request.url);
-
-  const date =
-    url.searchParams.get("date");
-
-
-  if (!date) {
-
-    return json(
-      {
-        error: "Falta la fecha"
-      },
-      400
-    );
-
-  }
-
-
   try {
+    const db = context.env.DB;
 
-    const result =
-      await db
-        .prepare(`
-          SELECT
-            id,
-            appointment_date,
-            appointment_time,
-            client_name,
-            client_phone,
-            status
-          FROM appointments
-          WHERE appointment_date = ?
-          AND status = 'confirmed'
-          ORDER BY appointment_time
-        `)
-        .bind(date)
-        .all();
+    const url = new URL(context.request.url);
+    const date = url.searchParams.get("date");
 
+    if (!date) {
+      return jsonResponse(
+        { error: "Falta la fecha" },
+        400
+      );
+    }
 
-    return json({
-      appointments:
-        result.results || []
-    });
+    const result = await db.prepare(`
+      SELECT
+        id,
+        appointment_date,
+        appointment_time,
+        client_name,
+        client_phone,
+        service,
+        status,
+        created_at
+      FROM appointments
+      WHERE appointment_date = ?
+        AND status = 'confirmed'
+      ORDER BY appointment_time ASC
+    `)
+    .bind(date)
+    .all();
 
-
+    return jsonResponse(result.results || []);
   } catch (error) {
-
-    return json(
+    return jsonResponse(
       {
-        error: "Error consultando D1",
+        error: "Error obteniendo las citas",
         details: error.message
       },
       500
     );
-
   }
-
 }
 
-
-/* =========================
-   POST
-========================= */
-
 export async function onRequestPost(context) {
-
-  const {
-    request,
-    env
-  } = context;
-
-
-  const db = env.DB;
-
-
-  if (!db) {
-
-    return json(
-      {
-        error: "D1 no está conectado"
-      },
-      500
-    );
-
-  }
-
-
   try {
+    const db = context.env.DB;
 
-    const data =
-      await request.json();
+    const data = await context.request.json();
 
-
-    const date =
-      data.date;
-
-    const time =
-      data.time;
-
-    const name =
-      data.name;
-
-    const phone =
-      data.phone;
-
+    const appointmentDate = data.date;
+    const appointmentTime = data.time;
+    const clientName = data.name;
+    const clientPhone = data.phone;
+    const service = data.service;
 
     if (
-      !date ||
-      !time ||
-      !name ||
-      !phone
+      !appointmentDate ||
+      !appointmentTime ||
+      !clientName ||
+      !clientPhone ||
+      !service
     ) {
-
-      return json(
+      return jsonResponse(
         {
-          error:
-            "Todos los campos son obligatorios"
+          error: "Faltan datos para crear la cita"
         },
         400
       );
-
     }
 
-
-    await db
-      .prepare(`
-        INSERT INTO appointments
-        (
-          appointment_date,
-          appointment_time,
-          client_name,
-          client_phone,
-          status
-        )
-        VALUES (?, ?, ?, ?, 'confirmed')
-      `)
-      .bind(
-        date,
-        time,
-        name.trim(),
-        phone.trim()
+    const result = await db.prepare(`
+      INSERT INTO appointments (
+        appointment_date,
+        appointment_time,
+        client_name,
+        client_phone,
+        service,
+        status
       )
-      .run();
+      VALUES (?, ?, ?, ?, ?, 'confirmed')
+    `)
+    .bind(
+      appointmentDate,
+      appointmentTime,
+      clientName,
+      clientPhone,
+      service
+    )
+    .run();
 
-
-    return json({
-      success: true
+    return jsonResponse({
+      success: true,
+      message: "Cita confirmada",
+      id: result.meta.last_row_id
     });
-
-
   } catch (error) {
-
-
     if (
       error.message &&
-      error.message
-        .toLowerCase()
-        .includes("unique")
+      error.message.toLowerCase().includes("unique")
     ) {
-
-      return json(
+      return jsonResponse(
         {
-          error:
-            "Ese horario ya está reservado"
+          error: "Ese horario acaba de ser reservado. Por favor selecciona otro."
         },
         409
       );
-
     }
 
-
-    return json(
+    return jsonResponse(
       {
-        error:
-          "No se pudo crear la cita",
-        details:
-          error.message
+        error: "No se pudo crear la cita",
+        details: error.message
       },
       500
     );
-
   }
-
 }
 
-
-/* =========================
-   DELETE
-========================= */
-
 export async function onRequestDelete(context) {
-
-  const {
-    request,
-    env
-  } = context;
-
-
-  const db = env.DB;
-
-
-  if (!db) {
-
-    return json(
-      {
-        error:
-          "D1 no está conectado"
-      },
-      500
-    );
-
-  }
-
-
   try {
+    const db = context.env.DB;
 
-    const data =
-      await request.json();
-
-
-    const id =
-      data.id;
-
+    const data = await context.request.json();
+    const id = data.id;
 
     if (!id) {
-
-      return json(
-        {
-          error:
-            "Falta el ID de la cita"
-        },
+      return jsonResponse(
+        { error: "Falta el ID de la cita" },
         400
       );
-
     }
 
+    const result = await db.prepare(`
+      DELETE FROM appointments
+      WHERE id = ?
+    `)
+    .bind(id)
+    .run();
 
-    const result =
-      await db
-        .prepare(`
-          DELETE FROM appointments
-          WHERE id = ?
-        `)
-        .bind(id)
-        .run();
-
-
-    if (
-      !result.meta ||
-      result.meta.changes === 0
-    ) {
-
-      return json(
-        {
-          error:
-            "La cita no existe"
-        },
+    if (!result.meta.changes) {
+      return jsonResponse(
+        { error: "La cita no existe" },
         404
       );
-
     }
 
-
-    return json({
+    return jsonResponse({
       success: true,
-      message:
-        "Cita cancelada correctamente"
+      message: "Cita cancelada"
     });
-
-
   } catch (error) {
-
-    return json(
+    return jsonResponse(
       {
-        error:
-          "No se pudo cancelar la cita",
-        details:
-          error.message
+        error: "No se pudo cancelar la cita",
+        details: error.message
       },
       500
     );
-
   }
-
 }
