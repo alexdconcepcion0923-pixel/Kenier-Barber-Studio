@@ -61,14 +61,13 @@
       opacity: 0.9;
     }
 
-    .refresh {
-      margin-bottom: 20px;
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
-    .date-title {
-      font-weight: bold;
-      margin-top: 20px;
-      margin-bottom: 10px;
+    .refresh {
+      margin-bottom: 20px;
     }
 
     .appointment {
@@ -107,6 +106,12 @@
       text-align: center;
       padding: 15px;
     }
+
+    .success {
+      color: #16803c;
+      text-align: center;
+      padding: 15px;
+    }
   </style>
 </head>
 
@@ -125,11 +130,11 @@
     <input
       type="date"
       id="date"
-      onchange="loadAppointments()"
     >
 
     <button
       class="refresh"
+      id="refreshBtn"
       onclick="loadAppointments()"
     >
       Actualizar citas
@@ -148,6 +153,19 @@
 
 <script>
 
+
+/*
+  BACKEND DE CLOUDFLARE
+
+  IMPORTANTE:
+  Este es el mismo backend que utiliza
+  la página principal.
+*/
+
+const API_URL =
+  "https://kenier-barber-studio.pages.dev/api/appointments";
+
+
 const dateInput =
   document.getElementById("date");
 
@@ -157,23 +175,38 @@ const appointmentsContainer =
 const summary =
   document.getElementById("summary");
 
+const refreshBtn =
+  document.getElementById("refreshBtn");
 
-// FECHA DE HOY
-const today = new Date();
 
-const year =
-  today.getFullYear();
+/*
+  FECHA DE HOY
+*/
 
-const month =
-  String(today.getMonth() + 1)
-    .padStart(2, "0");
+function getToday() {
 
-const day =
-  String(today.getDate())
-    .padStart(2, "0");
+  const today =
+    new Date();
+
+  const year =
+    today.getFullYear();
+
+  const month =
+    String(today.getMonth() + 1)
+      .padStart(2, "0");
+
+  const day =
+    String(today.getDate())
+      .padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+
+}
+
 
 const todayString =
-  `${year}-${month}-${day}`;
+  getToday();
+
 
 dateInput.value =
   todayString;
@@ -182,39 +215,89 @@ dateInput.min =
   todayString;
 
 
-// CARGAR CITAS
+/*
+  CARGAR CITAS
+*/
+
 async function loadAppointments() {
 
   const date =
     dateInput.value;
 
-  if (!date) return;
+  if (!date) {
+    return;
+  }
+
+
+  refreshBtn.disabled =
+    true;
+
+  refreshBtn.textContent =
+    "Cargando...";
+
 
   appointmentsContainer.innerHTML =
-    "<p>Cargando citas...</p>";
+    "<p style='text-align:center;'>Cargando citas...</p>";
+
+  summary.textContent =
+    "Cargando...";
+
 
   try {
 
     const response =
       await fetch(
-        `/api/appointments?date=${date}`
+        `${API_URL}?date=${encodeURIComponent(date)}`
       );
 
-    const data =
-      await response.json();
+
+    /*
+      LEER COMO TEXTO PRIMERO
+
+      Esto evita errores de Safari
+      si la respuesta no es JSON.
+    */
+
+    const raw =
+      await response.text();
+
+
+    let data = {};
+
+
+    try {
+
+      data =
+        raw
+          ? JSON.parse(raw)
+          : {};
+
+    } catch (error) {
+
+      throw new Error(
+        `Respuesta del servidor (${response.status}): ${raw.slice(0, 300)}`
+      );
+
+    }
+
 
     if (!response.ok) {
 
-      appointmentsContainer.innerHTML =
-        `<div class="error">
-          ${data.error || "Error cargando citas."}
-        </div>`;
+      throw new Error(
+        data.error ||
+        `Error del servidor (${response.status})`
+      );
 
-      return;
     }
+
 
     const appointments =
       data.appointments || [];
+
+
+    /*
+      RESUMEN
+    */
 
     summary.textContent =
       `${appointments.length} cita${
@@ -223,8 +306,14 @@ async function loadAppointments() {
           : "s"
       } para este día`;
 
+
     appointmentsContainer.innerHTML =
       "";
+
+
+    /*
+      NO HAY CITAS
+    */
 
     if (appointments.length === 0) {
 
@@ -234,7 +323,13 @@ async function loadAppointments() {
         </div>`;
 
       return;
+
     }
+
+
+    /*
+      MOSTRAR CITAS
+    */
 
     appointments.forEach(
       appointment => {
@@ -242,8 +337,10 @@ async function loadAppointments() {
         const div =
           document.createElement("div");
 
+
         div.className =
           "appointment";
+
 
         div.innerHTML = `
 
@@ -276,14 +373,13 @@ async function loadAppointments() {
 
           <button
             class="cancel"
-            onclick="cancelAppointment(
-              ${appointment.id}
-            )"
+            onclick="cancelAppointment(${appointment.id})"
           >
             Cancelar cita
           </button>
 
         `;
+
 
         appointmentsContainer
           .appendChild(div);
@@ -291,19 +387,43 @@ async function loadAppointments() {
       }
     );
 
+
   } catch (error) {
+
+    console.error(
+      "Error cargando citas:",
+      error
+    );
+
+
+    summary.textContent =
+      "Error";
+
 
     appointmentsContainer.innerHTML =
       `<div class="error">
-        Error conectando con el servidor.
+        ❌ No se pudieron cargar las citas.<br><br>
+        ${escapeHtml(error.message)}
       </div>`;
+
+
+  } finally {
+
+    refreshBtn.disabled =
+      false;
+
+    refreshBtn.textContent =
+      "Actualizar citas";
 
   }
 
 }
 
 
-// CANCELAR CITA
+/*
+  CANCELAR CITA
+*/
+
 async function cancelAppointment(id) {
 
   const confirmCancel =
@@ -311,50 +431,120 @@ async function cancelAppointment(id) {
       "¿Seguro que quieres cancelar esta cita?"
     );
 
-  if (!confirmCancel) return;
+
+  if (!confirmCancel) {
+    return;
+  }
+
 
   try {
 
+    /*
+      IMPORTANTE:
+
+      Usamos text/plain para evitar
+      problemas de CORS/preflight
+      en Safari.
+
+      El backend sigue leyendo
+      el contenido como JSON.
+    */
+
     const response =
       await fetch(
-        "/api/appointments",
+        API_URL,
         {
+
           method: "DELETE",
 
           headers: {
+
             "Content-Type":
-              "application/json"
+              "text/plain;charset=UTF-8"
+
           },
 
           body: JSON.stringify({
+
             id: id
+
           })
+
         }
       );
 
-    const data =
-      await response.json();
+
+    /*
+      LEER RESPUESTA COMO TEXTO
+    */
+
+    const raw =
+      await response.text();
+
+
+    let data = {};
+
+
+    try {
+
+      data =
+        raw
+          ? JSON.parse(raw)
+          : {};
+
+    } catch (error) {
+
+      throw new Error(
+        `Respuesta del servidor (${response.status}): ${raw.slice(0, 300)}`
+      );
+
+    }
+
+
+    /*
+      ERROR
+    */
 
     if (!response.ok) {
 
-      alert(
+      throw new Error(
         data.error ||
-        "No se pudo cancelar la cita."
+        `Error del servidor (${response.status})`
       );
 
-      return;
     }
 
+
+    /*
+      ÉXITO
+    */
+
     alert(
-      "Cita cancelada correctamente."
+      "✅ Cita cancelada correctamente."
     );
 
-    loadAppointments();
+
+    /*
+      RECARGAR LAS CITAS
+
+      La hora quedará disponible
+      nuevamente para los clientes.
+    */
+
+    await loadAppointments();
+
 
   } catch (error) {
 
+    console.error(
+      "Error cancelando cita:",
+      error
+    );
+
+
     alert(
-      "No se pudo conectar con el servidor."
+      "❌ No se pudo cancelar la cita.\n\n" +
+      error.message
     );
 
   }
@@ -362,42 +552,69 @@ async function cancelAppointment(id) {
 }
 
 
-// FORMATO DE HORA
+/*
+  FORMATO DE HORA
+*/
+
 function formatTime(time) {
 
-  const [hour, minute] =
+  const parts =
     time.split(":");
 
-  let h =
-    parseInt(hour);
+  let hour =
+    parseInt(parts[0], 10);
+
+  const minute =
+    parts[1];
 
   const ampm =
-    h >= 12
+    hour >= 12
       ? "PM"
       : "AM";
 
-  h =
-    h % 12 || 12;
 
-  return `${h}:${minute} ${ampm}`;
+  hour =
+    hour % 12 || 12;
+
+
+  return `${hour}:${minute} ${ampm}`;
+
 }
 
 
-// PROTEGER TEXTO
+/*
+  PROTEGER TEXTO HTML
+*/
+
 function escapeHtml(text) {
 
   const div =
     document.createElement("div");
 
   div.textContent =
-    text;
+    text ?? "";
 
   return div.innerHTML;
+
 }
 
 
-// CARGAR AUTOMÁTICAMENTE
+/*
+  CAMBIO DE FECHA
+*/
+
+dateInput.addEventListener(
+  "change",
+  loadAppointments
+);
+
+
+/*
+  CARGAR AUTOMÁTICAMENTE
+*/
+
 loadAppointments();
+
 
 </script>
 
