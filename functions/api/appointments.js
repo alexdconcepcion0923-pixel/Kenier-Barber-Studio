@@ -1,12 +1,12 @@
 export async function onRequestGet(context) {
   const { env } = context;
 
-  const db = env["kenier-barber-db"];
+  const db = env.DB;
 
   if (!db) {
     return Response.json(
       {
-        error: "D1 no está conectado a la Function"
+        error: "D1 no está conectado"
       },
       { status: 500 }
     );
@@ -41,15 +41,13 @@ export async function onRequestGet(context) {
     });
 
   } catch (error) {
-
     return Response.json(
       {
-        error: "Error consultando la base de datos",
+        error: "Error consultando D1",
         details: error.message
       },
       { status: 500 }
     );
-
   }
 }
 
@@ -57,19 +55,18 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  const db = env["kenier-barber-db"];
+  const db = env.DB;
 
   if (!db) {
     return Response.json(
       {
-        error: "D1 no está conectado a la Function"
+        error: "D1 no está conectado"
       },
       { status: 500 }
     );
   }
 
   try {
-
     const data = await request.json();
 
     const date = data.date;
@@ -86,7 +83,7 @@ export async function onRequestPost(context) {
       );
     }
 
-    const result = await db
+    await db
       .prepare(`
         INSERT INTO appointments
         (
@@ -107,8 +104,7 @@ export async function onRequestPost(context) {
       .run();
 
     return Response.json({
-      success: true,
-      id: result.meta?.last_row_id || null
+      success: true
     });
 
   } catch (error) {
@@ -132,6 +128,5 @@ export async function onRequestPost(context) {
       },
       { status: 500 }
     );
-
   }
 }
