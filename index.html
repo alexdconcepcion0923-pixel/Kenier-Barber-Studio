@@ -223,6 +223,18 @@ button.reserve:disabled {
 
 <script>
 
+/* =========================
+   URL DEL BACKEND
+========================= */
+
+const API_URL =
+  "https://kenier-barber-studio.pages.dev/api/appointments";
+
+
+/* =========================
+   HORARIOS
+========================= */
+
 const times = [
   "08:00",
   "09:00",
@@ -436,7 +448,7 @@ async function loadAppointments() {
 
     const response =
       await fetch(
-        `/api/appointments?date=${encodeURIComponent(dateInput.value)}`
+        `${API_URL}?date=${encodeURIComponent(dateInput.value)}`
       );
 
 
@@ -538,7 +550,7 @@ async function reserveAppointment() {
 
     const response =
       await fetch(
-        "/api/appointments",
+        API_URL,
         {
           method: "POST",
 
