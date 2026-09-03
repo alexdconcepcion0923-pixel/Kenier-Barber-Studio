@@ -1,242 +1,176 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Kenier Barber Studio | Panel</title>
+  <title>Kenier Barber Studio - Admin</title>
 
-<style>
-* {
-  box-sizing: border-box;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #f5f5f5;
-  color: #111;
-}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #111;
+    }
 
-.container {
-  width: min(94%, 600px);
-  margin: auto;
-  padding: 25px 0 40px;
-}
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
 
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 22px;
-  box-shadow: 0 4px 20px rgba(0,0,0,.08);
-}
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
-}
+    .login-box,
+    .admin-box {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
 
-h1 {
-  margin: 0;
-  font-size: 24px;
-}
+    .admin-box {
+      display: none;
+    }
 
-.subtitle {
-  color: #666;
-  margin-top: 5px;
-}
+    input,
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
 
-.refresh {
-  border: 0;
-  background: #111;
-  color: white;
-  padding: 11px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-}
+    input {
+      border: 1px solid #ccc;
+    }
 
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
+    button {
+      border: none;
+      background: #111;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-input[type="date"] {
-  width: 100%;
-  padding: 14px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  font-size: 16px;
-  background: white;
-}
+    button:hover {
+      opacity: 0.9;
+    }
 
-.summary {
-  margin: 20px 0;
-  padding: 15px;
-  background: #f1f1f1;
-  border-radius: 12px;
-  text-align: center;
-  font-weight: bold;
-}
+    .logout {
+      background: #777;
+      margin-bottom: 20px;
+    }
 
-.appointments {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+    .error {
+      color: #d00;
+      margin-top: 12px;
+      text-align: center;
+    }
 
-.appointment {
-  border: 1px solid #ddd;
-  border-radius: 14px;
-  padding: 16px;
-  background: white;
-}
+    .success {
+      color: green;
+      margin-top: 12px;
+      text-align: center;
+    }
 
-.appointment-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
+    .date-title {
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
 
-.time {
-  font-size: 20px;
-  font-weight: bold;
-}
+    .appointment {
+      background: #f7f7f7;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 12px;
+    }
 
-.status {
-  background: #e8f7e8;
-  color: #176117;
-  padding: 5px 9px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: bold;
-}
+    .appointment strong {
+      font-size: 18px;
+    }
 
-.client {
-  margin-top: 12px;
-  font-size: 17px;
-  font-weight: bold;
-}
+    .cancel {
+      background: #c62828;
+      margin-top: 12px;
+    }
 
-.phone {
-  margin-top: 5px;
-  color: #666;
-}
+    .empty {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
 
-.cancel {
-  width: 100%;
-  margin-top: 14px;
-  padding: 11px;
-  border: 0;
-  border-radius: 9px;
-  background: #eee;
-  color: #9b1111;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.empty {
-  text-align: center;
-  padding: 30px 15px;
-  color: #666;
-  background: #f7f7f7;
-  border-radius: 12px;
-}
-
-.loading {
-  text-align: center;
-  padding: 25px;
-  color: #666;
-}
-
-.error {
-  margin-top: 15px;
-  padding: 14px;
-  border-radius: 10px;
-  background: #ffe9e9;
-  color: #8a1111;
-  text-align: center;
-}
-
-@media (max-width: 400px) {
-  .header {
-    align-items: flex-start;
-  }
-
-  h1 {
-    font-size: 21px;
-  }
-
-  .refresh {
-    padding: 9px 11px;
-  }
-}
-</style>
+    .summary {
+      background: #111;
+      color: white;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      margin: 15px 0;
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <div class="card">
+  <h1>Kenier Barber Studio</h1>
 
-    <div class="header">
+  <!-- LOGIN -->
+  <div class="login-box" id="loginBox">
 
-      <div>
-        <h1>Kenier Barber Studio</h1>
+    <h2>Panel de administrador</h2>
 
-        <div class="subtitle">
-          Panel de citas
-        </div>
-      </div>
+    <input
+      type="password"
+      id="password"
+      placeholder="Contraseña"
+      autocomplete="current-password"
+    >
 
-      <button
-        class="refresh"
-        id="refresh"
-        type="button"
-      >
-        🔄
-      </button>
+    <button onclick="login()">
+      Entrar
+    </button>
 
-    </div>
+    <div id="loginMessage"></div>
 
+  </div>
+
+
+  <!-- ADMIN -->
+  <div class="admin-box" id="adminBox">
+
+    <button class="logout" onclick="logout()">
+      Cerrar sesión
+    </button>
 
     <label for="date">
-      Selecciona el día
+      <strong>Seleccionar fecha</strong>
     </label>
 
     <input
       type="date"
       id="date"
+      onchange="loadAppointments()"
     >
 
-
-    <div
-      class="summary"
-      id="summary"
-    >
-      Cargando citas...
+    <div class="summary" id="summary">
+      Cargando...
     </div>
 
-
-    <div
-      class="appointments"
-      id="appointments"
-    >
-    </div>
-
-
-    <div
-      class="error"
-      id="error"
-      style="display:none;"
-    >
-    </div>
+    <div id="appointments"></div>
 
   </div>
 
@@ -245,317 +179,73 @@ input[type="date"] {
 
 <script>
 
-const dateInput =
-  document.getElementById("date");
+  const loginBox = document.getElementById("loginBox");
+  const adminBox = document.getElementById("adminBox");
+  const loginMessage = document.getElementById("loginMessage");
+  const passwordInput = document.getElementById("password");
 
-const appointmentsContainer =
-  document.getElementById("appointments");
+  const dateInput = document.getElementById("date");
+  const appointmentsContainer =
+    document.getElementById("appointments");
 
-const summary =
-  document.getElementById("summary");
-
-const refreshButton =
-  document.getElementById("refresh");
-
-const errorBox =
-  document.getElementById("error");
+  const summary =
+    document.getElementById("summary");
 
 
-/* =========================
-   FECHA DE HOY
-========================= */
+  // FECHA DE HOY
+  const today = new Date();
 
-function getToday() {
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
 
-  const now = new Date();
+  const todayString = `${year}-${month}-${day}`;
 
-  const year =
-    now.getFullYear();
-
-  const month =
-    String(now.getMonth() + 1)
-      .padStart(2, "0");
-
-  const day =
-    String(now.getDate())
-      .padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
+  dateInput.value = todayString;
+  dateInput.min = todayString;
 
 
-dateInput.value =
-  getToday();
+  // VERIFICAR SESIÓN
+  function checkLogin() {
 
-dateInput.min =
-  getToday();
+    if (
+      document.cookie.includes(
+        "admin_auth=authenticated"
+      )
+    ) {
 
+      loginBox.style.display = "none";
+      adminBox.style.display = "block";
 
-/* =========================
-   FORMATO DE HORA
-========================= */
-
-function formatTime(time) {
-
-  const hour =
-    Number(time.split(":")[0]);
-
-  if (hour === 12) {
-    return "12:00 PM";
-  }
-
-  if (hour > 12) {
-    return `${hour - 12}:00 PM`;
-  }
-
-  return `${hour}:00 AM`;
-}
-
-
-/* =========================
-   MOSTRAR ERROR
-========================= */
-
-function showError(text) {
-
-  errorBox.textContent =
-    text;
-
-  errorBox.style.display =
-    "block";
-
-}
-
-
-/* =========================
-   OCULTAR ERROR
-========================= */
-
-function hideError() {
-
-  errorBox.textContent =
-    "";
-
-  errorBox.style.display =
-    "none";
-
-}
-
-
-/* =========================
-   CARGAR CITAS
-========================= */
-
-async function loadAppointments() {
-
-  hideError();
-
-  appointmentsContainer.innerHTML =
-    `<div class="loading">Cargando citas...</div>`;
-
-  summary.textContent =
-    "Cargando citas...";
-
-
-  try {
-
-    const response =
-      await fetch(
-        `/api/appointments?date=${encodeURIComponent(dateInput.value)}`
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        "No se pudieron cargar las citas."
-      );
+      loadAppointments();
 
     }
 
-
-    const appointments =
-      data.appointments || [];
+  }
 
 
-    appointmentsContainer.innerHTML =
-      "";
+  // LOGIN
+  async function login() {
 
+    const password =
+      passwordInput.value.trim();
 
-    if (appointments.length === 0) {
+    if (!password) {
 
-      summary.textContent =
-        "No hay citas para este día.";
-
-      appointmentsContainer.innerHTML =
-        `<div class="empty">
-          📅 No hay citas reservadas.
-        </div>`;
+      loginMessage.innerHTML =
+        '<div class="error">Escribe la contraseña.</div>';
 
       return;
 
     }
 
 
-    summary.textContent =
-      `${appointments.length} cita${appointments.length === 1 ? "" : "s"} reservada${appointments.length === 1 ? "" : "s"}`;
+    try {
 
-
-    appointments.forEach(
-      appointment => {
-
-        const card =
-          document.createElement("div");
-
-        card.className =
-          "appointment";
-
-
-        const top =
-          document.createElement("div");
-
-        top.className =
-          "appointment-top";
-
-
-        const time =
-          document.createElement("div");
-
-        time.className =
-          "time";
-
-        time.textContent =
-          formatTime(
-            appointment.appointment_time
-          );
-
-
-        const status =
-          document.createElement("div");
-
-        status.className =
-          "status";
-
-        status.textContent =
-          "CONFIRMADA";
-
-
-        top.appendChild(time);
-
-        top.appendChild(status);
-
-
-        const client =
-          document.createElement("div");
-
-        client.className =
-          "client";
-
-        client.textContent =
-          appointment.client_name;
-
-
-        const phone =
-          document.createElement("div");
-
-        phone.className =
-          "phone";
-
-        phone.textContent =
-          "📱 " +
-          appointment.client_phone;
-
-
-        const cancel =
-          document.createElement("button");
-
-        cancel.className =
-          "cancel";
-
-        cancel.type =
-          "button";
-
-        cancel.textContent =
-          "❌ Cancelar cita";
-
-
-        cancel.addEventListener(
-          "click",
-          () => {
-
-            cancelAppointment(
-              appointment
-            );
-
-          }
-        );
-
-
-        card.appendChild(top);
-
-        card.appendChild(client);
-
-        card.appendChild(phone);
-
-        card.appendChild(cancel);
-
-
-        appointmentsContainer.appendChild(
-          card
-        );
-
-      }
-    );
-
-
-  } catch (error) {
-
-    appointmentsContainer.innerHTML =
-      "";
-
-    summary.textContent =
-      "No se pudieron cargar las citas.";
-
-    showError(
-      error.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   CANCELAR CITA
-========================= */
-
-async function cancelAppointment(
-  appointment
-) {
-
-  const confirmed =
-    confirm(
-      `¿Cancelar la cita de ${appointment.client_name} a las ${formatTime(appointment.appointment_time)}?`
-    );
-
-
-  if (!confirmed) {
-    return;
-  }
-
-
-  try {
-
-    const response =
-      await fetch(
-        "/api/appointments",
+      const response = await fetch(
+        "/api/admin-login",
         {
-          method: "DELETE",
+          method: "POST",
 
           headers: {
             "Content-Type":
@@ -563,65 +253,283 @@ async function cancelAppointment(
           },
 
           body: JSON.stringify({
-
-            id:
-              appointment.id
-
+            password: password
           })
+        }
+      );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        loginMessage.innerHTML =
+          `<div class="error">${data.error || "Contraseña incorrecta."}</div>`;
+
+        return;
+
+      }
+
+
+      loginBox.style.display = "none";
+      adminBox.style.display = "block";
+
+      passwordInput.value = "";
+
+      loadAppointments();
+
+
+    } catch (error) {
+
+      loginMessage.innerHTML =
+        '<div class="error">No se pudo conectar con el servidor.</div>';
+
+    }
+
+  }
+
+
+  // ENTER PARA LOGIN
+  passwordInput.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (event.key === "Enter") {
+        login();
+      }
+
+    }
+  );
+
+
+  // CARGAR CITAS
+  async function loadAppointments() {
+
+    const date =
+      dateInput.value;
+
+    if (!date) return;
+
+
+    appointmentsContainer.innerHTML =
+      "<p>Cargando citas...</p>";
+
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/appointments?date=${date}`
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        appointmentsContainer.innerHTML =
+          `<div class="error">${data.error || "Error cargando citas."}</div>`;
+
+        return;
+
+      }
+
+
+      const appointments =
+        data.appointments || [];
+
+
+      summary.textContent =
+        `${appointments.length} cita${appointments.length === 1 ? "" : "s"} para este día`;
+
+
+      appointmentsContainer.innerHTML = "";
+
+
+      if (appointments.length === 0) {
+
+        appointmentsContainer.innerHTML =
+          '<div class="empty">No hay citas reservadas para este día.</div>';
+
+        return;
+
+      }
+
+
+      appointments.forEach(
+        appointment => {
+
+          const div =
+            document.createElement("div");
+
+          div.className =
+            "appointment";
+
+
+          div.innerHTML = `
+
+            <strong>
+              ${formatTime(appointment.appointment_time)}
+            </strong>
+
+            <br><br>
+
+            <strong>Cliente:</strong>
+            ${escapeHtml(appointment.client_name)}
+
+            <br>
+
+            <strong>Teléfono:</strong>
+            ${escapeHtml(appointment.client_phone)}
+
+            <br>
+
+            <strong>Estado:</strong>
+            ${escapeHtml(appointment.status)}
+
+            <button
+              class="cancel"
+              onclick="cancelAppointment(${appointment.id})"
+            >
+              Cancelar cita
+            </button>
+
+          `;
+
+
+          appointmentsContainer.appendChild(div);
 
         }
       );
 
 
-    const data =
-      await response.json();
+    } catch (error) {
+
+      appointmentsContainer.innerHTML =
+        '<div class="error">Error conectando con el servidor.</div>';
+
+    }
+
+  }
 
 
-    if (!response.ok) {
+  // CANCELAR CITA
+  async function cancelAppointment(id) {
 
-      throw new Error(
-        data.error ||
-        "No se pudo cancelar la cita."
+    const confirmCancel =
+      confirm(
+        "¿Seguro que quieres cancelar esta cita?"
+      );
+
+
+    if (!confirmCancel) return;
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/appointments",
+          {
+            method: "DELETE",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+              id: id
+            })
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        alert(
+          data.error ||
+          "No se pudo cancelar la cita."
+        );
+
+        return;
+
+      }
+
+
+      alert(
+        "Cita cancelada correctamente."
+      );
+
+
+      loadAppointments();
+
+
+    } catch (error) {
+
+      alert(
+        "No se pudo conectar con el servidor."
       );
 
     }
 
+  }
 
-    await loadAppointments();
 
+  // FORMATO DE HORA
+  function formatTime(time) {
 
-  } catch (error) {
+    const [hour, minute] =
+      time.split(":");
 
-    showError(
-      error.message
-    );
+    let h = parseInt(hour);
+
+    const ampm =
+      h >= 12 ? "PM" : "AM";
+
+    h =
+      h % 12 || 12;
+
+    return `${h}:${minute} ${ampm}`;
 
   }
 
-}
+
+  // SEGURIDAD HTML
+  function escapeHtml(text) {
+
+    const div =
+      document.createElement("div");
+
+    div.textContent =
+      text;
+
+    return div.innerHTML;
+
+  }
 
 
-/* =========================
-   EVENTOS
-========================= */
+  // CERRAR SESIÓN
+  function logout() {
 
-dateInput.addEventListener(
-  "change",
-  loadAppointments
-);
+    document.cookie =
+      "admin_auth=; Path=/; Max-Age=0";
 
+    adminBox.style.display = "none";
+    loginBox.style.display = "block";
 
-refreshButton.addEventListener(
-  "click",
-  loadAppointments
-);
+  }
 
 
-/* =========================
-   INICIAR
-========================= */
-
-loadAppointments();
+  checkLogin();
 
 </script>
 
