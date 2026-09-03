@@ -36,6 +36,11 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     }
 
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
     input,
     button {
       width: 100%;
@@ -47,6 +52,7 @@
 
     input {
       border: 1px solid #ccc;
+      background: white;
     }
 
     button {
@@ -75,15 +81,18 @@
       padding: 15px;
       border-radius: 12px;
       margin-top: 12px;
+      border: 1px solid #e5e5e5;
     }
 
-    .appointment strong {
-      font-size: 18px;
+    .appointment strong.time {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 15px;
     }
 
     .cancel {
       background: #c62828;
-      margin-top: 12px;
+      margin-top: 15px;
     }
 
     .empty {
@@ -102,14 +111,27 @@
     }
 
     .error {
-      color: #d00;
+      background: #ffe5e5;
+      color: #b00000;
       text-align: center;
       padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      word-break: break-word;
     }
 
     .success {
+      background: #e5f8eb;
       color: #16803c;
       text-align: center;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    .loading {
+      text-align: center;
+      color: #777;
       padding: 15px;
     }
   </style>
@@ -135,12 +157,15 @@
     <button
       class="refresh"
       id="refreshBtn"
-      onclick="loadAppointments()"
+      type="button"
     >
       Actualizar citas
     </button>
 
-    <div class="summary" id="summary">
+    <div
+      class="summary"
+      id="summary"
+    >
       Cargando...
     </div>
 
@@ -153,18 +178,21 @@
 
 <script>
 
-
 /*
-  BACKEND DE CLOUDFLARE
-
-  IMPORTANTE:
-  Este es el mismo backend que utiliza
-  la página principal.
+====================================================
+  URL DEL BACKEND
+====================================================
 */
 
 const API_URL =
   "https://kenier-barber-studio.pages.dev/api/appointments";
 
+
+/*
+====================================================
+  ELEMENTOS DE LA PÁGINA
+====================================================
+*/
 
 const dateInput =
   document.getElementById("date");
@@ -180,13 +208,14 @@ const refreshBtn =
 
 
 /*
+====================================================
   FECHA DE HOY
+====================================================
 */
 
 function getToday() {
 
-  const today =
-    new Date();
+  const today = new Date();
 
   const year =
     today.getFullYear();
@@ -216,7 +245,9 @@ dateInput.min =
 
 
 /*
+====================================================
   CARGAR CITAS
+====================================================
 */
 
 async function loadAppointments() {
@@ -225,7 +256,12 @@ async function loadAppointments() {
     dateInput.value;
 
   if (!date) {
+
+    summary.textContent =
+      "Selecciona una fecha.";
+
     return;
+
   }
 
 
@@ -237,7 +273,10 @@ async function loadAppointments() {
 
 
   appointmentsContainer.innerHTML =
-    "<p style='text-align:center;'>Cargando citas...</p>";
+    `<div class="loading">
+      Cargando citas...
+    </div>`;
+
 
   summary.textContent =
     "Cargando...";
@@ -245,17 +284,35 @@ async function loadAppointments() {
 
   try {
 
+    /*
+      PETICIÓN DIRECTA A CLOUDFLARE
+
+      No usamos /api/appointments porque
+      esta página está en GitHub Pages.
+    */
+
+    const url =
+      API_URL +
+      "?date=" +
+      encodeURIComponent(date);
+
+
     const response =
       await fetch(
-        `${API_URL}?date=${encodeURIComponent(date)}`
+        url,
+        {
+          method: "GET",
+          mode: "cors",
+          cache: "no-store"
+        }
       );
 
 
     /*
       LEER COMO TEXTO PRIMERO
 
-      Esto evita errores de Safari
-      si la respuesta no es JSON.
+      Esto evita errores de Safari si
+      la respuesta no es JSON.
     */
 
     const raw =
@@ -272,14 +329,20 @@ async function loadAppointments() {
           ? JSON.parse(raw)
           : {};
 
-    } catch (error) {
+    } catch (parseError) {
 
       throw new Error(
-        `Respuesta del servidor (${response.status}): ${raw.slice(0, 300)}`
+        "El servidor no devolvió JSON. " +
+        "Respuesta: " +
+        raw.substring(0, 300)
       );
 
     }
 
+
+    /*
+      COMPROBAR ERROR DEL SERVIDOR
+    */
 
     if (!response.ok) {
 
@@ -291,12 +354,16 @@ async function loadAppointments() {
     }
 
 
+    /*
+      OBTENER CITAS
+    */
+
     const appointments =
       data.appointments || [];
 
 
     /*
-      RESUMEN
+      MOSTRAR RESUMEN
     */
 
     summary.textContent =
@@ -312,7 +379,7 @@ async function loadAppointments() {
 
 
     /*
-      NO HAY CITAS
+      SI NO HAY CITAS
     */
 
     if (appointments.length === 0) {
@@ -328,7 +395,7 @@ async function loadAppointments() {
 
 
     /*
-      MOSTRAR CITAS
+      MOSTRAR CADA CITA
     */
 
     appointments.forEach(
@@ -344,27 +411,25 @@ async function loadAppointments() {
 
         div.innerHTML = `
 
-          <strong>
+          <strong class="time">
             ${formatTime(
               appointment.appointment_time
             )}
           </strong>
-
-          <br><br>
 
           <strong>Cliente:</strong>
           ${escapeHtml(
             appointment.client_name
           )}
 
-          <br>
+          <br><br>
 
           <strong>Teléfono:</strong>
           ${escapeHtml(
             appointment.client_phone
           )}
 
-          <br>
+          <br><br>
 
           <strong>Estado:</strong>
           ${escapeHtml(
@@ -373,6 +438,7 @@ async function loadAppointments() {
 
           <button
             class="cancel"
+            type="button"
             onclick="cancelAppointment(${appointment.id})"
           >
             Cancelar cita
@@ -402,7 +468,7 @@ async function loadAppointments() {
 
     appointmentsContainer.innerHTML =
       `<div class="error">
-        ❌ No se pudieron cargar las citas.<br><br>
+        ❌ Error conectando con el servidor.<br><br>
         ${escapeHtml(error.message)}
       </div>`;
 
@@ -421,7 +487,9 @@ async function loadAppointments() {
 
 
 /*
+====================================================
   CANCELAR CITA
+====================================================
 */
 
 async function cancelAppointment(id) {
@@ -440,36 +508,43 @@ async function cancelAppointment(id) {
   try {
 
     /*
-      IMPORTANTE:
+      DESACTIVAR BOTÓN MIENTRAS SE CANCELA
+    */
+
+    const buttons =
+      document.querySelectorAll(".cancel");
+
+
+    buttons.forEach(
+      button => {
+        button.disabled = true;
+      }
+    );
+
+
+    /*
+      DELETE DIRECTAMENTE A CLOUDFLARE
 
       Usamos text/plain para evitar
-      problemas de CORS/preflight
-      en Safari.
-
-      El backend sigue leyendo
-      el contenido como JSON.
+      el preflight de CORS en Safari.
     */
 
     const response =
       await fetch(
         API_URL,
         {
-
           method: "DELETE",
 
-          headers: {
+          mode: "cors",
 
+          headers: {
             "Content-Type":
               "text/plain;charset=UTF-8"
-
           },
 
           body: JSON.stringify({
-
             id: id
-
           })
-
         }
       );
 
@@ -492,17 +567,19 @@ async function cancelAppointment(id) {
           ? JSON.parse(raw)
           : {};
 
-    } catch (error) {
+    } catch (parseError) {
 
       throw new Error(
-        `Respuesta del servidor (${response.status}): ${raw.slice(0, 300)}`
+        "El servidor no devolvió JSON. " +
+        "Respuesta: " +
+        raw.substring(0, 300)
       );
 
     }
 
 
     /*
-      ERROR
+      COMPROBAR ERROR
     */
 
     if (!response.ok) {
@@ -525,10 +602,10 @@ async function cancelAppointment(id) {
 
 
     /*
-      RECARGAR LAS CITAS
+      RECARGAR CITAS
 
-      La hora quedará disponible
-      nuevamente para los clientes.
+      El horario eliminado quedará
+      disponible nuevamente.
     */
 
     await loadAppointments();
@@ -547,13 +624,30 @@ async function cancelAppointment(id) {
       error.message
     );
 
+
+    /*
+      VOLVER A ACTIVAR BOTONES
+    */
+
+    const buttons =
+      document.querySelectorAll(".cancel");
+
+
+    buttons.forEach(
+      button => {
+        button.disabled = false;
+      }
+    );
+
   }
 
 }
 
 
 /*
+====================================================
   FORMATO DE HORA
+====================================================
 */
 
 function formatTime(time) {
@@ -561,11 +655,14 @@ function formatTime(time) {
   const parts =
     time.split(":");
 
+
   let hour =
     parseInt(parts[0], 10);
 
+
   const minute =
     parts[1];
+
 
   const ampm =
     hour >= 12
@@ -583,7 +680,9 @@ function formatTime(time) {
 
 
 /*
-  PROTEGER TEXTO HTML
+====================================================
+  PROTEGER TEXTO CONTRA HTML
+====================================================
 */
 
 function escapeHtml(text) {
@@ -591,8 +690,10 @@ function escapeHtml(text) {
   const div =
     document.createElement("div");
 
+
   div.textContent =
     text ?? "";
+
 
   return div.innerHTML;
 
@@ -600,7 +701,9 @@ function escapeHtml(text) {
 
 
 /*
-  CAMBIO DE FECHA
+====================================================
+  CAMBIAR FECHA
+====================================================
 */
 
 dateInput.addEventListener(
@@ -610,11 +713,24 @@ dateInput.addEventListener(
 
 
 /*
-  CARGAR AUTOMÁTICAMENTE
+====================================================
+  BOTÓN ACTUALIZAR
+====================================================
+*/
+
+refreshBtn.addEventListener(
+  "click",
+  loadAppointments
+);
+
+
+/*
+====================================================
+  CARGAR CITAS AL ABRIR
+====================================================
 */
 
 loadAppointments();
-
 
 </script>
 
