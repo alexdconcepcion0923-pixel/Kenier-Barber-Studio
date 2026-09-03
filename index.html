@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -169,18 +169,19 @@
 
     <div class="logo">
       <h1>KENIER BARBER STUDIO</h1>
-      <p>Book your appointment</p>
+      <p>Reserva tu cita</p>
     </div>
 
     <div class="card">
 
-      <label for="date">Select date</label>
+      <label for="date">Selecciona la fecha</label>
+
       <input type="date" id="date">
 
-      <label>Select time</label>
+      <label>Selecciona el horario</label>
 
       <div id="loading" class="loading">
-        Loading available times...
+        Cargando horarios disponibles...
       </div>
 
       <div id="times" class="times"></div>
@@ -189,19 +190,21 @@
 
     <div class="card">
 
-      <label for="name">Your name</label>
+      <label for="name">Tu nombre</label>
+
       <input
         type="text"
         id="name"
-        placeholder="Enter your name"
+        placeholder="Escribe tu nombre"
         autocomplete="name"
       >
 
-      <label for="phone">Phone number</label>
+      <label for="phone">Número de teléfono</label>
+
       <input
         type="tel"
         id="phone"
-        placeholder="Enter your phone number"
+        placeholder="Escribe tu número"
         autocomplete="tel"
       >
 
@@ -210,7 +213,7 @@
         class="reserve-btn"
         onclick="reserveAppointment()"
       >
-        Reserve Appointment
+        Reservar cita
       </button>
 
       <div id="message" class="message"></div>
@@ -227,17 +230,17 @@
 <script>
 
   /*
-    CLOUDFlARE BACKEND
+    BACKEND DE CLOUDFLARE
   */
   const API_URL =
     "https://kenier-barber-studio.pages.dev/api/appointments";
 
 
   /*
-    AVAILABLE TIMES
+    HORARIOS DISPONIBLES
 
-    8:00 AM through 6:00 PM
-    Each appointment = 1 hour
+    8:00 AM hasta 6:00 PM
+    Cada cita dura 1 hora
   */
   const times = [
     "08:00",
@@ -257,36 +260,47 @@
   let selectedTime = null;
 
 
-  const dateInput = document.getElementById("date");
-  const timesContainer = document.getElementById("times");
-  const loading = document.getElementById("loading");
-  const reserveBtn = document.getElementById("reserveBtn");
-  const message = document.getElementById("message");
+  const dateInput =
+    document.getElementById("date");
+
+  const timesContainer =
+    document.getElementById("times");
+
+  const loading =
+    document.getElementById("loading");
+
+  const reserveBtn =
+    document.getElementById("reserveBtn");
+
+  const message =
+    document.getElementById("message");
 
 
   /*
-    GET TODAY'S DATE
+    OBTENER LA FECHA DE HOY
   */
   function getToday() {
 
     const today = new Date();
 
-    const year = today.getFullYear();
+    const year =
+      today.getFullYear();
 
-    const month = String(
-      today.getMonth() + 1
-    ).padStart(2, "0");
+    const month =
+      String(today.getMonth() + 1)
+        .padStart(2, "0");
 
-    const day = String(
-      today.getDate()
-    ).padStart(2, "0");
+    const day =
+      String(today.getDate())
+        .padStart(2, "0");
 
     return `${year}-${month}-${day}`;
+
   }
 
 
   /*
-    SHOW MESSAGE
+    MOSTRAR MENSAJE
   */
   function showMessage(text, type) {
 
@@ -296,11 +310,12 @@
       "message " + type;
 
     message.style.display = "block";
+
   }
 
 
   /*
-    HIDE MESSAGE
+    OCULTAR MENSAJE
   */
   function hideMessage() {
 
@@ -310,11 +325,12 @@
 
 
   /*
-    LOAD APPOINTMENTS FROM CLOUDFLARE
+    CARGAR LAS CITAS DESDE CLOUDFLARE
   */
   async function loadAppointments() {
 
-    const date = dateInput.value;
+    const date =
+      dateInput.value;
 
     if (!date) {
       return;
@@ -339,26 +355,29 @@
 
 
       /*
-        IMPORTANT:
-        We read the response as TEXT first.
+        LEEMOS LA RESPUESTA COMO TEXTO
+        ANTES DE CONVERTIRLA A JSON.
 
-        This prevents Safari from throwing:
+        Esto evita el problema de Safari:
         "The string did not match the expected pattern"
-        when the server doesn't return valid JSON.
       */
 
-      const raw = await response.text();
+      const raw =
+        await response.text();
 
       let data = {};
 
       try {
 
-        data = raw ? JSON.parse(raw) : {};
+        data =
+          raw
+            ? JSON.parse(raw)
+            : {};
 
       } catch (parseError) {
 
         throw new Error(
-          `Server response (${response.status}): ${raw.slice(0, 200)}`
+          `Respuesta del servidor (${response.status}): ${raw.slice(0, 200)}`
         );
 
       }
@@ -368,7 +387,7 @@
 
         throw new Error(
           data.error ||
-          `Server error (${response.status})`
+          `Error del servidor (${response.status})`
         );
 
       }
@@ -379,7 +398,7 @@
 
 
       /*
-        GET BOOKED TIMES
+        OBTENER LOS HORARIOS OCUPADOS
       */
       const bookedTimes =
         appointments.map(
@@ -389,7 +408,7 @@
 
 
       /*
-        CREATE TIME BUTTONS
+        CREAR LOS BOTONES DE HORARIOS
       */
       times.forEach(time => {
 
@@ -398,14 +417,15 @@
 
         button.type = "button";
 
-        button.className = "time-btn";
+        button.className =
+          "time-btn";
 
         button.textContent =
           formatTime(time);
 
 
         /*
-          CHECK IF TIME IS BOOKED
+          COMPROBAR SI EL HORARIO ESTÁ OCUPADO
         */
         if (bookedTimes.includes(time)) {
 
@@ -414,7 +434,8 @@
           button.disabled = true;
 
           button.textContent =
-            formatTime(time) + " · Booked";
+            formatTime(time) +
+            " · Ocupado";
 
         } else {
 
@@ -434,12 +455,12 @@
     } catch (error) {
 
       console.error(
-        "Error loading appointments:",
+        "Error cargando citas:",
         error
       );
 
       showMessage(
-        "❌ Could not load available times. " +
+        "❌ No se pudieron cargar los horarios. " +
         error.message,
         "error"
       );
@@ -454,7 +475,7 @@
 
 
   /*
-    SELECT TIME
+    SELECCIONAR HORARIO
   */
   function selectTime(time, button) {
 
@@ -462,7 +483,7 @@
 
 
     /*
-      Remove previous selection
+      QUITAR SELECCIÓN ANTERIOR
     */
     document
       .querySelectorAll(".time-btn")
@@ -474,7 +495,7 @@
 
 
     /*
-      Select clicked button
+      MARCAR EL HORARIO SELECCIONADO
     */
     button.classList.add("selected");
 
@@ -485,8 +506,7 @@
 
 
   /*
-    FORMAT 24-HOUR TIME
-    INTO 12-HOUR FORMAT
+    CONVERTIR 24 HORAS A 12 HORAS
   */
   function formatTime(time) {
 
@@ -513,7 +533,7 @@
 
 
   /*
-    RESERVE APPOINTMENT
+    RESERVAR CITA
   */
   async function reserveAppointment() {
 
@@ -524,20 +544,26 @@
       dateInput.value;
 
     const name =
-      document.getElementById("name").value.trim();
+      document
+        .getElementById("name")
+        .value
+        .trim();
 
     const phone =
-      document.getElementById("phone").value.trim();
+      document
+        .getElementById("phone")
+        .value
+        .trim();
 
 
     /*
-      VALIDATION
+      VALIDACIONES
     */
 
     if (!date) {
 
       showMessage(
-        "❌ Please select a date.",
+        "❌ Selecciona una fecha.",
         "error"
       );
 
@@ -549,7 +575,7 @@
     if (!selectedTime) {
 
       showMessage(
-        "❌ Please select a time.",
+        "❌ Selecciona un horario.",
         "error"
       );
 
@@ -561,7 +587,7 @@
     if (!name) {
 
       showMessage(
-        "❌ Please enter your name.",
+        "❌ Escribe tu nombre.",
         "error"
       );
 
@@ -573,7 +599,7 @@
     if (!phone) {
 
       showMessage(
-        "❌ Please enter your phone number.",
+        "❌ Escribe tu número de teléfono.",
         "error"
       );
 
@@ -583,28 +609,23 @@
 
 
     /*
-      PREVENT DOUBLE CLICK
+      EVITAR DOBLE CLIC
     */
     reserveBtn.disabled = true;
 
     reserveBtn.textContent =
-      "Reserving...";
+      "Reservando...";
 
 
     try {
 
 
       /*
-        IMPORTANT:
+        USAMOS text/plain PARA EVITAR
+        EL PREFLIGHT DE CORS EN SAFARI.
 
-        We intentionally use text/plain instead
-        of application/json.
-
-        This avoids the CORS preflight request
-        that can cause problems on Safari/iPhone.
-
-        Cloudflare still reads the body using
-        request.json().
+        CLOUDFLARE SIGUE RECIBIENDO
+        EL BODY COMO JSON.
       */
 
       const response =
@@ -635,14 +656,14 @@
 
 
       /*
-        READ RESPONSE AS TEXT FIRST
+        LEER RESPUESTA COMO TEXTO
       */
       const raw =
         await response.text();
 
 
       /*
-        TRY TO CONVERT RESPONSE TO JSON
+        CONVERTIR RESPUESTA A JSON
       */
       let data = {};
 
@@ -656,21 +677,21 @@
       } catch (parseError) {
 
         throw new Error(
-          `Server response (${response.status}): ${raw.slice(0, 300)}`
+          `Respuesta del servidor (${response.status}): ${raw.slice(0, 300)}`
         );
 
       }
 
 
       /*
-        SERVER ERROR
+        ERROR DEL SERVIDOR
       */
       if (!response.ok) {
 
         if (response.status === 409) {
 
           throw new Error(
-            "That time was just booked by someone else. Please choose another time."
+            "Ese horario acaba de ser reservado por otra persona. Selecciona otro horario."
           );
 
         }
@@ -678,23 +699,23 @@
 
         throw new Error(
           data.error ||
-          `Server error (${response.status})`
+          `Error del servidor (${response.status})`
         );
 
       }
 
 
       /*
-        SUCCESS
+        RESERVA EXITOSA
       */
       showMessage(
-        "✅ Appointment reserved successfully!",
+        "✅ ¡Cita reservada correctamente!",
         "success"
       );
 
 
       /*
-        CLEAR FORM
+        LIMPIAR FORMULARIO
       */
       document.getElementById("name").value = "";
 
@@ -702,17 +723,16 @@
 
 
       /*
-        RESET SELECTED TIME
+        QUITAR HORARIO SELECCIONADO
       */
       selectedTime = null;
 
 
       /*
-        RELOAD TIMES
+        RECARGAR HORARIOS
 
-        This makes the newly booked
-        appointment immediately appear
-        as unavailable.
+        La hora recién reservada aparecerá
+        inmediatamente como ocupada.
       */
       await loadAppointments();
 
@@ -720,7 +740,7 @@
     } catch (error) {
 
       console.error(
-        "Reservation error:",
+        "Error reservando cita:",
         error
       );
 
@@ -736,7 +756,7 @@
       reserveBtn.disabled = false;
 
       reserveBtn.textContent =
-        "Reserve Appointment";
+        "Reservar cita";
 
     }
 
@@ -744,7 +764,7 @@
 
 
   /*
-    WHEN DATE CHANGES
+    CUANDO CAMBIA LA FECHA
   */
   dateInput.addEventListener(
     "change",
@@ -753,21 +773,21 @@
 
 
   /*
-    SET TODAY AS DEFAULT DATE
+    PONER HOY COMO FECHA INICIAL
   */
   dateInput.value =
     getToday();
 
 
   /*
-    PREVENT SELECTING PAST DATES
+    NO PERMITIR FECHAS PASADAS
   */
   dateInput.min =
     getToday();
 
 
   /*
-    LOAD TODAY'S APPOINTMENTS
+    CARGAR LOS HORARIOS DE HOY
   */
   loadAppointments();
 
