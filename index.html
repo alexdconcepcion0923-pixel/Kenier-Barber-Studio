@@ -114,11 +114,8 @@
       appearance: auto;
     }
 
-    .schedule {
-      display: none;
-    }
-
     .schedule-info {
+      display: none;
       font-size: 13px;
       color: #666;
       margin-bottom: 10px;
@@ -223,16 +220,6 @@
       margin-top: 12px;
     }
 
-    .success-small {
-      display: none;
-      background: #e9f8ed;
-      color: #17652d;
-      border-radius: 11px;
-      padding: 12px;
-      font-size: 13px;
-      margin-top: 12px;
-    }
-
     .footer {
       text-align: center;
       color: #888;
@@ -267,6 +254,7 @@
 
 
   <!-- RESERVA -->
+
   <div class="card" id="mainCard">
 
     <h2>Reservar cita</h2>
@@ -274,14 +262,23 @@
     <label for="service">Servicio</label>
 
     <select id="service" class="service-select">
-      <option value="">Selecciona un servicio</option>
-      <option value="Pelado con estilo — $500">Pelado con estilo — $500</option>
+
+      <option value="">
+        Selecciona un servicio
+      </option>
+
+      <option value="Pelado con estilo — $500">
+        Pelado con estilo — $500
+      </option>
+
       <option value="Pelado clásico o al cero (personas mayores) — $300">
         Pelado clásico o al cero (personas mayores) — $300
       </option>
+
       <option value="Pelado para niños (menores de 12 años) — $300">
         Pelado para niños (menores de 12 años) — $300
       </option>
+
     </select>
 
 
@@ -295,25 +292,47 @@
 
     <label for="time">Horario</label>
 
-    <select id="time" class="time-select" disabled>
-      <option value="">Selecciona primero una fecha</option>
+    <select
+      id="time"
+      class="time-select"
+      disabled
+    >
+
+      <option value="">
+        Selecciona primero una fecha
+      </option>
+
     </select>
 
-    <div class="available-message" id="availableMessage"></div>
+
+    <div
+      class="available-message"
+      id="availableMessage"
+    ></div>
 
   </div>
 
 
   <!-- DATOS DEL CLIENTE -->
-  <div class="card booking-card" id="bookingCard">
+
+  <div
+    class="card booking-card"
+    id="bookingCard"
+  >
 
     <h2>Datos del cliente</h2>
 
-    <div class="selected-time" id="selectedTime">
+    <div
+      class="selected-time"
+      id="selectedTime"
+    >
       Selecciona un horario
     </div>
 
-    <label for="name">Nombre</label>
+
+    <label for="name">
+      Nombre
+    </label>
 
     <input
       type="text"
@@ -323,7 +342,9 @@
     >
 
 
-    <label for="phone">Teléfono</label>
+    <label for="phone">
+      Teléfono
+    </label>
 
     <input
       type="tel"
@@ -337,23 +358,34 @@
       Confirmar cita
     </button>
 
-    <div class="error" id="errorMessage"></div>
+
+    <div
+      class="error"
+      id="errorMessage"
+    ></div>
 
   </div>
 
 
   <!-- CONFIRMACIÓN -->
-  <div class="confirmation" id="confirmationCard">
+
+  <div
+    class="confirmation"
+    id="confirmationCard"
+  >
 
     <div class="confirmation-icon">
       ✓
     </div>
 
-    <h2>¡Cita confirmada!</h2>
+    <h2>
+      ¡Cita confirmada!
+    </h2>
 
     <p class="confirmation-subtitle">
       Tu cita ha sido reservada correctamente.
     </p>
+
 
     <div class="confirmation-details">
 
@@ -379,7 +411,11 @@
 
     </div>
 
-    <button class="new-booking" id="newBookingButton">
+
+    <button
+      class="new-booking"
+      id="newBookingButton"
+    >
       Reservar otra cita
     </button>
 
@@ -396,19 +432,22 @@
 <script>
 
   /*
-    ==========================================================
-    CONFIGURACIÓN
-    ==========================================================
+  ==========================================================
+  CONFIGURACIÓN
+  ==========================================================
   */
 
   const API_URL =
     "https://kenier-barber-studio.pages.dev/api/appointments";
 
+  const SETTINGS_API =
+    "https://kenier-barber-studio.pages.dev/api/settings";
+
 
   /*
-    ==========================================================
-    ELEMENTOS
-    ==========================================================
+  ==========================================================
+  ELEMENTOS
+  ==========================================================
   */
 
   const serviceSelect =
@@ -461,59 +500,62 @@
 
 
   /*
-    ==========================================================
-    HORARIOS
-    ==========================================================
+  ==========================================================
+  CONFIGURACIÓN DE HORARIO
+  ==========================================================
   */
 
-  const allTimes = [
-    "08:00",
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00"
-  ];
+  let businessHours = [];
 
 
   /*
-    ==========================================================
-    HORA ACTUAL DE CUBA
-    ==========================================================
+  ==========================================================
+  HORA ACTUAL DE CUBA
+  ==========================================================
   */
 
   function getCubaNow() {
 
-    const formatter = new Intl.DateTimeFormat(
-      "en-CA",
-      {
-        timeZone: "America/Havana",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-      }
-    );
+    const formatter =
+      new Intl.DateTimeFormat(
+        "en-CA",
+        {
+          timeZone: "America/Havana",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false
+        }
+      );
+
 
     const parts =
-      formatter.formatToParts(new Date());
+      formatter.formatToParts(
+        new Date()
+      );
+
 
     const values = {};
 
+
     parts.forEach(part => {
-      if (part.type !== "literal") {
-        values[part.type] = part.value;
+
+      if (
+        part.type !== "literal"
+      ) {
+
+        values[part.type] =
+          part.value;
+
       }
+
     });
 
+
     return {
+
       date:
         `${values.year}-${values.month}-${values.day}`,
 
@@ -522,73 +564,199 @@
 
       minute:
         Number(values.minute)
+
     };
+
   }
 
 
   /*
-    ==========================================================
-    FECHA MÍNIMA
-    ==========================================================
+  ==========================================================
+  FECHA MÍNIMA
+  ==========================================================
   */
 
   function setMinimumDate() {
 
-    const cubaNow = getCubaNow();
+    const cubaNow =
+      getCubaNow();
 
-    dateInput.min = cubaNow.date;
 
-    /*
-      Si por alguna razón el teléfono tenía
-      una fecha anterior guardada, la corregimos.
-    */
+    dateInput.min =
+      cubaNow.date;
+
 
     if (
       !dateInput.value ||
       dateInput.value < cubaNow.date
     ) {
-      dateInput.value = cubaNow.date;
+
+      dateInput.value =
+        cubaNow.date;
+
     }
+
   }
 
 
   /*
-    ==========================================================
-    COMPROBAR SI UN HORARIO YA PASÓ
-    ==========================================================
+  ==========================================================
+  DAY OF WEEK
+  ==========================================================
   */
 
-  function isTimePast(time) {
+  function getDayOfWeek(
+    dateString
+  ) {
 
-    const cubaNow = getCubaNow();
+    return new Date(
+      dateString +
+      "T12:00:00Z"
+    ).getUTCDay();
 
-    if (dateInput.value !== cubaNow.date) {
+  }
+
+
+  /*
+  ==========================================================
+  OBTENER HORARIO DEL DÍA
+  ==========================================================
+  */
+
+  function getScheduleForDate(
+    dateString
+  ) {
+
+    const dayOfWeek =
+      getDayOfWeek(
+        dateString
+      );
+
+
+    return businessHours.find(
+      schedule =>
+        Number(
+          schedule.day_of_week
+        ) === dayOfWeek
+    );
+
+  }
+
+
+  /*
+  ==========================================================
+  CONVERTIR HH:MM A MINUTOS
+  ==========================================================
+  */
+
+  function timeToMinutes(
+    time
+  ) {
+
+    const [
+      hour,
+      minute
+    ] =
+      time
+        .split(":")
+        .map(Number);
+
+
+    return (
+      hour * 60 +
+      minute
+    );
+
+  }
+
+
+  /*
+  ==========================================================
+  CONVERTIR MINUTOS A HH:MM
+  ==========================================================
+  */
+
+  function minutesToTime(
+    minutes
+  ) {
+
+    const hour =
+      Math.floor(
+        minutes / 60
+      );
+
+    const minute =
+      minutes % 60;
+
+
+    return (
+      String(hour).padStart(2, "0") +
+      ":" +
+      String(minute).padStart(2, "0")
+    );
+
+  }
+
+
+  /*
+  ==========================================================
+  COMPROBAR SI HORARIO YA PASÓ
+  ==========================================================
+  */
+
+  function isTimePast(
+    time
+  ) {
+
+    const cubaNow =
+      getCubaNow();
+
+
+    if (
+      dateInput.value !==
+      cubaNow.date
+    ) {
+
       return false;
+
     }
 
-    const [hour, minute] =
-      time.split(":").map(Number);
-
-    const currentMinutes =
-      cubaNow.hour * 60 + cubaNow.minute;
 
     const appointmentMinutes =
-      hour * 60 + minute;
+      timeToMinutes(
+        time
+      );
 
-    return appointmentMinutes <= currentMinutes;
+
+    const currentMinutes =
+      cubaNow.hour * 60 +
+      cubaNow.minute;
+
+
+    return (
+      appointmentMinutes <=
+      currentMinutes
+    );
+
   }
 
 
   /*
-    ==========================================================
-    FORMATEAR FECHA
-    ==========================================================
+  ==========================================================
+  FORMATEAR FECHA
+  ==========================================================
   */
 
-  function formatDate(dateString) {
+  function formatDate(
+    dateString
+  ) {
 
     const date =
-      new Date(dateString + "T12:00:00");
+      new Date(
+        dateString +
+        "T12:00:00"
+      );
+
 
     return date.toLocaleDateString(
       "es-ES",
@@ -598,56 +766,245 @@
         year: "numeric"
       }
     );
+
   }
 
 
   /*
-    ==========================================================
-    FORMATEAR HORA
-    ==========================================================
+  ==========================================================
+  FORMATEAR HORA
+  ==========================================================
   */
 
-  function formatTime(time) {
+  function formatTime(
+    time
+  ) {
 
-    const [hourString, minute] =
+    const [
+      hourString,
+      minute
+    ] =
       time.split(":");
+
 
     let hour =
       Number(hourString);
 
+
     const suffix =
-      hour >= 12 ? "PM" : "AM";
+      hour >= 12
+        ? "PM"
+        : "AM";
+
 
     hour =
       hour % 12 || 12;
 
-    return `${hour}:${minute} ${suffix}`;
+
+    return (
+      `${hour}:${minute} ${suffix}`
+    );
+
   }
 
 
   /*
-    ==========================================================
-    CARGAR HORARIOS DISPONIBLES
-    ==========================================================
+  ==========================================================
+  CARGAR CONFIGURACIÓN DEL NEGOCIO
+  ==========================================================
   */
 
-  async function refreshTimes(date) {
+  async function loadBusinessHours() {
+
+    try {
+
+      const response =
+        await fetch(
+          `${SETTINGS_API}?t=${Date.now()}`,
+          {
+            method: "GET",
+            cache: "no-store"
+          }
+        );
+
+
+      const rawText =
+        await response.text();
+
+
+      let data;
+
+      try {
+
+        data =
+          JSON.parse(
+            rawText
+          );
+
+      } catch (e) {
+
+        throw new Error(
+          "No se pudo leer la configuración de horarios."
+        );
+
+      }
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "No se pudieron cargar los horarios."
+        );
+
+      }
+
+
+      if (
+        !Array.isArray(data)
+      ) {
+
+        throw new Error(
+          "La configuración de horarios no es válida."
+        );
+
+      }
+
+
+      businessHours =
+        data;
+
+
+      return true;
+
+    } catch (error) {
+
+      businessHours = [];
+
+      availableMessage.textContent =
+        "No se pudo cargar el horario del negocio.";
+
+      timeSelect.innerHTML =
+        '<option value="">No se pudo cargar el horario</option>';
+
+      timeSelect.disabled =
+        true;
+
+      return false;
+
+    }
+
+  }
+
+
+  /*
+  ==========================================================
+  CARGAR HORARIOS DISPONIBLES
+  ==========================================================
+  */
+
+  async function refreshTimes(
+    date
+  ) {
 
     timeSelect.innerHTML =
       '<option value="">Cargando horarios...</option>';
 
-    timeSelect.disabled = true;
+    timeSelect.disabled =
+      true;
 
-    bookingCard.style.display = "none";
+    bookingCard.style.display =
+      "none";
 
-    availableMessage.textContent = "";
+    availableMessage.textContent =
+      "";
+
+
+    /*
+      Primero obtenemos la configuración
+      actual del negocio.
+    */
+
+    const settingsLoaded =
+      await loadBusinessHours();
+
+
+    if (!settingsLoaded) {
+      return;
+    }
+
+
+    const schedule =
+      getScheduleForDate(
+        date
+      );
+
+
+    /*
+      ======================================================
+      DÍA CERRADO
+      ======================================================
+    */
+
+    if (
+      !schedule ||
+      Number(
+        schedule.is_available
+      ) !== 1
+    ) {
+
+      timeSelect.innerHTML =
+        '<option value="">Día no disponible</option>';
+
+      timeSelect.disabled =
+        true;
+
+      availableMessage.textContent =
+        "Kenier Barber Studio no está disponible para reservas este día.";
+
+      return;
+
+    }
+
+
+    /*
+      ======================================================
+      HORARIO DEL DÍA
+      ======================================================
+    */
+
+    const openingMinutes =
+      timeToMinutes(
+        schedule.open_time
+      );
+
+
+    const closingMinutes =
+      timeToMinutes(
+        schedule.close_time
+      );
+
+
+    /*
+      La cita dura 1 hora.
+      Por eso nunca mostramos un turno
+      que empiece después de:
+      
+      cierre - 60 minutos
+    */
+
+    const lastAppointmentMinutes =
+      closingMinutes - 60;
+
+
+    /*
+      Obtener citas ya reservadas.
+    */
+
+    let appointments = [];
+
 
     try {
-
-      /*
-        Evita que el navegador utilice
-        una respuesta vieja.
-      */
 
       const response =
         await fetch(
@@ -662,155 +1019,219 @@
       const rawText =
         await response.text();
 
-      let appointments = [];
 
       try {
+
         appointments =
-          JSON.parse(rawText);
+          JSON.parse(
+            rawText
+          );
+
       } catch (e) {
+
         throw new Error(
           "Respuesta inválida del servidor."
         );
+
       }
 
 
       if (!response.ok) {
+
         throw new Error(
           appointments.error ||
-          "No se pudieron obtener los horarios."
-        );
-      }
-
-
-      const occupied =
-        new Set(
-          appointments.map(
-            appointment =>
-              appointment.appointment_time
-          )
+          "No se pudieron obtener las citas."
         );
 
-
-      timeSelect.innerHTML =
-        '<option value="">Selecciona un horario</option>';
-
-
-      let availableCount = 0;
-
-
-      allTimes.forEach(time => {
-
-        /*
-          No mostrar horarios ya reservados.
-        */
-
-        if (occupied.has(time)) {
-          return;
-        }
-
-
-        /*
-          Si es HOY, tampoco mostrar
-          horarios que ya pasaron.
-        */
-
-        if (isTimePast(time)) {
-          return;
-        }
-
-
-        const option =
-          document.createElement("option");
-
-        option.value = time;
-
-        option.textContent =
-          formatTime(time);
-
-        timeSelect.appendChild(option);
-
-        availableCount++;
-
-      });
-
-
-      if (availableCount === 0) {
-
-        timeSelect.innerHTML =
-          '<option value="">No quedan horarios disponibles</option>';
-
-        timeSelect.disabled = true;
-
-        availableMessage.textContent =
-          "No quedan horarios disponibles para esta fecha.";
-
-      } else {
-
-        timeSelect.disabled = false;
-
-        availableMessage.textContent =
-          `${availableCount} horario${availableCount === 1 ? "" : "s"} disponible${availableCount === 1 ? "" : "s"}.`;
       }
-
 
     } catch (error) {
 
       timeSelect.innerHTML =
         '<option value="">No se pudieron cargar los horarios</option>';
 
-      timeSelect.disabled = true;
+      timeSelect.disabled =
+        true;
 
       availableMessage.textContent =
         error.message ||
         "Error conectando con el servidor.";
+
+      return;
+
     }
+
+
+    /*
+      Horarios ocupados.
+    */
+
+    const occupied =
+      new Set(
+        appointments.map(
+          appointment =>
+            appointment.appointment_time
+        )
+      );
+
+
+    /*
+      ======================================================
+      CREAR HORARIOS SEGÚN EL ADMIN
+      ======================================================
+    */
+
+    timeSelect.innerHTML =
+      '<option value="">Selecciona un horario</option>';
+
+
+    let availableCount =
+      0;
+
+
+    for (
+      let minutes = openingMinutes;
+      minutes <= lastAppointmentMinutes;
+      minutes += 60
+    ) {
+
+      const time =
+        minutesToTime(
+          minutes
+        );
+
+
+      /*
+        No mostrar horarios ocupados.
+      */
+
+      if (
+        occupied.has(time)
+      ) {
+
+        continue;
+
+      }
+
+
+      /*
+        No mostrar horarios pasados
+        cuando se reserva para hoy.
+      */
+
+      if (
+        isTimePast(time)
+      ) {
+
+        continue;
+
+      }
+
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        time;
+
+
+      option.textContent =
+        formatTime(time);
+
+
+      timeSelect.appendChild(
+        option
+      );
+
+
+      availableCount++;
+
+    }
+
+
+    /*
+      ======================================================
+      RESULTADO
+      ======================================================
+    */
+
+    if (
+      availableCount === 0
+    ) {
+
+      timeSelect.innerHTML =
+        '<option value="">No quedan horarios disponibles</option>';
+
+      timeSelect.disabled =
+        true;
+
+
+      availableMessage.textContent =
+        "No quedan horarios disponibles para esta fecha.";
+
+    } else {
+
+      timeSelect.disabled =
+        false;
+
+
+      availableMessage.textContent =
+        `${availableCount} horario${availableCount === 1 ? "" : "s"} disponible${availableCount === 1 ? "" : "s"}.`;
+
+    }
+
   }
 
 
   /*
-    ==========================================================
-    CAMBIO DE FECHA
-    ==========================================================
+  ==========================================================
+  CAMBIO DE FECHA
+  ==========================================================
   */
 
   dateInput.addEventListener(
     "change",
     async () => {
 
-      /*
-        Volvemos a comprobar la fecha.
-        Esto evita que alguien manipule
-        el calendario manualmente.
-      */
-
       const cubaNow =
         getCubaNow();
 
-      if (dateInput.value < cubaNow.date) {
+
+      if (
+        dateInput.value <
+        cubaNow.date
+      ) {
 
         dateInput.value =
           cubaNow.date;
 
+
         alert(
           "No puedes seleccionar una fecha pasada."
         );
+
       }
 
 
       confirmationCard.style.display =
         "none";
 
+
       await refreshTimes(
         dateInput.value
       );
+
     }
   );
 
 
   /*
-    ==========================================================
-    CAMBIO DE HORARIO
-    ==========================================================
+  ==========================================================
+  CAMBIO DE HORARIO
+  ==========================================================
   */
 
   timeSelect.addEventListener(
@@ -821,12 +1242,15 @@
         "none";
 
 
-      if (!timeSelect.value) {
+      if (
+        !timeSelect.value
+      ) {
 
         bookingCard.style.display =
           "none";
 
         return;
+
       }
 
 
@@ -838,28 +1262,26 @@
         "block";
 
 
-      /*
-        Llevar al usuario a la sección
-        de datos del cliente.
-      */
+      setTimeout(
+        () => {
 
-      setTimeout(() => {
+          bookingCard.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
 
-        bookingCard.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-
-      }, 100);
+        },
+        100
+      );
 
     }
   );
 
 
   /*
-    ==========================================================
-    CONFIRMAR CITA
-    ==========================================================
+  ==========================================================
+  CONFIRMAR CITA
+  ==========================================================
   */
 
   confirmButton.addEventListener(
@@ -886,10 +1308,6 @@
         phoneInput.value.trim();
 
 
-      /*
-        Validaciones
-      */
-
       if (!service) {
 
         showError(
@@ -897,6 +1315,7 @@
         );
 
         return;
+
       }
 
 
@@ -907,6 +1326,7 @@
         );
 
         return;
+
       }
 
 
@@ -917,6 +1337,7 @@
         );
 
         return;
+
       }
 
 
@@ -927,6 +1348,7 @@
         );
 
         return;
+
       }
 
 
@@ -937,57 +1359,119 @@
         );
 
         return;
+
       }
 
-
-      /*
-        Comprobar nuevamente que la fecha
-        no sea anterior a hoy.
-      */
 
       const cubaNow =
         getCubaNow();
 
 
-      if (date < cubaNow.date) {
+      if (
+        date <
+        cubaNow.date
+      ) {
 
         showError(
           "No puedes reservar una cita para una fecha pasada."
         );
 
-        setMinimumDate();
-
         await refreshTimes(
-          dateInput.value
+          cubaNow.date
         );
 
+        dateInput.value =
+          cubaNow.date;
+
         return;
+
       }
 
 
-      /*
-        Comprobar nuevamente que la hora
-        no haya pasado si es hoy.
-      */
-
-      if (isTimePast(time)) {
+      if (
+        isTimePast(time)
+      ) {
 
         showError(
           "Ese horario ya pasó. Selecciona otro."
         );
 
-        await refreshTimes(date);
+        await refreshTimes(
+          date
+        );
 
         return;
+
       }
 
 
       /*
-        Desactivar botón para evitar
-        doble reserva.
+        Comprobar que el día sigue abierto
+        antes de enviar la reserva.
       */
 
-      confirmButton.disabled = true;
+      const schedule =
+        getScheduleForDate(
+          date
+        );
+
+
+      if (
+        !schedule ||
+        Number(
+          schedule.is_available
+        ) !== 1
+      ) {
+
+        showError(
+          "Ese día ya no está disponible para reservas."
+        );
+
+        await refreshTimes(
+          date
+        );
+
+        return;
+
+      }
+
+
+      const appointmentMinutes =
+        timeToMinutes(
+          time
+        );
+
+
+      const closeMinutes =
+        timeToMinutes(
+          schedule.close_time
+        );
+
+
+      if (
+        appointmentMinutes + 60 >
+        closeMinutes
+      ) {
+
+        showError(
+          "Ese horario está fuera del horario de trabajo."
+        );
+
+        await refreshTimes(
+          date
+        );
+
+        return;
+
+      }
+
+
+      /*
+        Desactivar botón.
+      */
+
+      confirmButton.disabled =
+        true;
 
       confirmButton.textContent =
         "Confirmando...";
@@ -1006,15 +1490,26 @@
                   "text/plain;charset=UTF-8"
               },
 
-              body: JSON.stringify({
-                date: date,
-                time: time,
-                name: name,
-                phone: phone,
-                service: service
-              }),
+              body:
+                JSON.stringify({
+                  date:
+                    date,
 
-              cache: "no-store"
+                  time:
+                    time,
+
+                  name:
+                    name,
+
+                  phone:
+                    phone,
+
+                  service:
+                    service
+                }),
+
+              cache:
+                "no-store"
             }
           );
 
@@ -1025,46 +1520,51 @@
 
         let result;
 
+
         try {
 
           result =
-            JSON.parse(rawText);
+            JSON.parse(
+              rawText
+            );
 
         } catch (e) {
 
           throw new Error(
             "El servidor devolvió una respuesta inválida."
           );
+
         }
 
 
-        /*
-          Si el horario fue ocupado
-          por otra persona.
-        */
-
-        if (!response.ok) {
+        if (
+          !response.ok
+        ) {
 
           throw new Error(
             result.error ||
             "No se pudo confirmar la cita."
           );
+
         }
 
 
-        if (!result.success) {
+        if (
+          !result.success
+        ) {
 
           throw new Error(
             result.error ||
             "No se pudo confirmar la cita."
           );
+
         }
 
 
         /*
-          ==============================================
-          ¡CITA CONFIRMADA!
-          ==============================================
+          ================================================
+          CONFIRMACIÓN
+          ================================================
         */
 
         confirmationName.textContent =
@@ -1080,52 +1580,43 @@
           formatTime(time);
 
 
-        /*
-          MOSTRAR CONFIRMACIÓN
-          Y NO OCULTARLA DESPUÉS.
-        */
-
         confirmationCard.style.display =
           "block";
 
-
-        /*
-          Ocultar formulario de datos.
-        */
 
         bookingCard.style.display =
           "none";
 
 
         /*
-          Volver a actualizar horarios.
-          Esto NO oculta la confirmación.
+          Actualizar horarios.
         */
 
-        await refreshTimes(date);
+        await refreshTimes(
+          date
+        );
 
 
         /*
-          Volver a mostrar la confirmación
-          por seguridad después de refreshTimes.
+          IMPORTANTE:
+          refreshTimes no toca confirmationCard.
         */
 
         confirmationCard.style.display =
           "block";
 
 
-        /*
-          Subir hasta la confirmación.
-        */
+        setTimeout(
+          () => {
 
-        setTimeout(() => {
+            confirmationCard.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
 
-          confirmationCard.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-
-        }, 150);
+          },
+          150
+        );
 
 
       } catch (error) {
@@ -1142,6 +1633,7 @@
 
         confirmButton.textContent =
           "Confirmar cita";
+
       }
 
     }
@@ -1149,15 +1641,18 @@
 
 
   /*
-    ==========================================================
-    MOSTRAR ERROR
-    ==========================================================
+  ==========================================================
+  ERROR
+  ==========================================================
   */
 
-  function showError(message) {
+  function showError(
+    message
+  ) {
 
     errorMessage.textContent =
       message;
+
 
     errorMessage.style.display =
       "block";
@@ -1167,13 +1662,14 @@
       behavior: "smooth",
       block: "center"
     });
+
   }
 
 
   /*
-    ==========================================================
-    NUEVA CITA
-    ==========================================================
+  ==========================================================
+  NUEVA CITA
+  ==========================================================
   */
 
   newBookingButton.addEventListener(
@@ -1183,26 +1679,33 @@
       confirmationCard.style.display =
         "none";
 
+
       bookingCard.style.display =
         "none";
+
 
       serviceSelect.value =
         "";
 
+
       nameInput.value =
         "";
+
 
       phoneInput.value =
         "";
 
+
       timeSelect.value =
         "";
+
 
       errorMessage.style.display =
         "none";
 
 
       setMinimumDate();
+
 
       await refreshTimes(
         dateInput.value
@@ -1219,37 +1722,51 @@
 
 
   /*
-    ==========================================================
-    INICIALIZACIÓN
-    ==========================================================
+  ==========================================================
+  INICIALIZACIÓN
+  ==========================================================
   */
 
-  setMinimumDate();
+  async function init() {
 
-  refreshTimes(
-    dateInput.value
-  );
+    setMinimumDate();
+
+    await refreshTimes(
+      dateInput.value
+    );
+
+  }
+
+
+  init();
 
 
   /*
-    ==========================================================
-    ACTUALIZAR AUTOMÁTICAMENTE LOS HORARIOS
-    CADA 60 SEGUNDOS
-    ==========================================================
+  ==========================================================
+  ACTUALIZAR CADA 60 SEGUNDOS
+  ==========================================================
   */
 
   setInterval(
     async () => {
 
-      /*
-        Esto es especialmente importante
-        si alguien deja la página abierta
-        durante mucho tiempo.
-      */
-
       setMinimumDate();
 
-      if (dateInput.value) {
+
+      if (
+        dateInput.value
+      ) {
+
+        /*
+          También volvemos a descargar
+          business_hours.
+
+          Esto significa que si Kenier cambia
+          el horario desde Admin, la página
+          pública terminará usando la nueva
+          configuración sin necesidad de
+          cambiar el código.
+        */
 
         await refreshTimes(
           dateInput.value
