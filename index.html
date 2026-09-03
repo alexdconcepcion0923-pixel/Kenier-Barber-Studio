@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Kenier Barber Studio | Reservas</title>
 
 <style>
@@ -12,7 +13,7 @@
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   background: #f5f5f5;
   color: #111;
 }
@@ -52,6 +53,7 @@ input {
   border: 1px solid #ddd;
   border-radius: 10px;
   font-size: 16px;
+  background: white;
 }
 
 .times {
@@ -63,14 +65,16 @@ input {
 .time {
   border: 1px solid #ddd;
   background: white;
+  color: #111;
   padding: 13px 5px;
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.time:hover {
-  background: #eee;
+.time:active {
+  transform: scale(.97);
 }
 
 .time.selected {
@@ -84,6 +88,14 @@ input {
   color: #aaa;
   text-decoration: line-through;
   cursor: not-allowed;
+}
+
+.selected-info {
+  margin-top: 15px;
+  padding: 12px;
+  background: #f1f1f1;
+  border-radius: 10px;
+  text-align: center;
 }
 
 button.reserve {
@@ -101,14 +113,7 @@ button.reserve {
 
 button.reserve:disabled {
   opacity: .5;
-}
-
-.selected-info {
-  margin-top: 15px;
-  padding: 12px;
-  background: #f1f1f1;
-  border-radius: 10px;
-  text-align: center;
+  cursor: not-allowed;
 }
 
 .message {
@@ -119,23 +124,16 @@ button.reserve:disabled {
   text-align: center;
 }
 
-.success {
+.message.success {
   display: block;
   background: #e8f7e8;
   color: #176117;
 }
 
-.error {
+.message.error {
   display: block;
   background: #ffe9e9;
   color: #8a1111;
-}
-
-.loading {
-  text-align: center;
-  color: #777;
-  grid-column: 1 / -1;
-  padding: 15px;
 }
 </style>
 </head>
@@ -143,24 +141,44 @@ button.reserve:disabled {
 <body>
 
 <div class="container">
+
   <div class="card">
 
     <h1>Kenier Barber Studio</h1>
-    <div class="subtitle">Reserva tu cita</div>
 
-    <label for="date">Selecciona el día</label>
-    <input type="date" id="date">
-
-    <label>Selecciona la hora</label>
-    <div class="times" id="times">
-      <div class="loading">Cargando horarios...</div>
+    <div class="subtitle">
+      Reserva tu cita
     </div>
 
-    <div class="selected-info" id="selectedInfo">
+    <label for="date">
+      Selecciona el día
+    </label>
+
+    <input
+      type="date"
+      id="date"
+    >
+
+    <label>
+      Selecciona la hora
+    </label>
+
+    <div
+      class="times"
+      id="times"
+    ></div>
+
+    <div
+      class="selected-info"
+      id="selectedInfo"
+    >
       Selecciona una hora
     </div>
 
-    <label for="name">Tu nombre</label>
+    <label for="name">
+      Tu nombre
+    </label>
+
     <input
       type="text"
       id="name"
@@ -168,7 +186,10 @@ button.reserve:disabled {
       autocomplete="name"
     >
 
-    <label for="phone">Teléfono</label>
+    <label for="phone">
+      Teléfono
+    </label>
+
     <input
       type="tel"
       id="phone"
@@ -176,16 +197,25 @@ button.reserve:disabled {
       autocomplete="tel"
     >
 
-    <button class="reserve" id="reserve" disabled>
+    <button
+      class="reserve"
+      id="reserve"
+      disabled
+    >
       Reservar cita
     </button>
 
-    <div class="message" id="message"></div>
+    <div
+      class="message"
+      id="message"
+    ></div>
 
   </div>
+
 </div>
 
 <script>
+
 const times = [
   "08:00",
   "09:00",
@@ -200,168 +230,422 @@ const times = [
   "18:00"
 ];
 
-const dateInput = document.getElementById("date");
-const timesContainer = document.getElementById("times");
-const selectedInfo = document.getElementById("selectedInfo");
-const nameInput = document.getElementById("name");
-const phoneInput = document.getElementById("phone");
-const reserveButton = document.getElementById("reserve");
-const message = document.getElementById("message");
+const dateInput =
+  document.getElementById("date");
+
+const timesContainer =
+  document.getElementById("times");
+
+const selectedInfo =
+  document.getElementById("selectedInfo");
+
+const nameInput =
+  document.getElementById("name");
+
+const phoneInput =
+  document.getElementById("phone");
+
+const reserveButton =
+  document.getElementById("reserve");
+
+const message =
+  document.getElementById("message");
 
 let selectedTime = null;
 
+
+/* =========================
+   FECHA ACTUAL
+========================= */
+
 function getToday() {
+
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    String(now.getMonth() + 1)
+      .padStart(2, "0");
+
+  const day =
+    String(now.getDate())
+      .padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 }
 
+
 dateInput.min = getToday();
+
 dateInput.value = getToday();
 
-function formatTime(time) {
-  const hour = Number(time.split(":")[0]);
 
-  if (hour === 12) return "12:00 PM";
-  if (hour > 12) return `${hour - 12}:00 PM`;
+/* =========================
+   FORMATO DE HORA
+========================= */
+
+function formatTime(time) {
+
+  const hour =
+    Number(time.split(":")[0]);
+
+  if (hour === 12) {
+    return "12:00 PM";
+  }
+
+  if (hour > 12) {
+    return `${hour - 12}:00 PM`;
+  }
 
   return `${hour}:00 AM`;
 }
 
-async function loadAppointments() {
+
+/* =========================
+   MOSTRAR HORARIOS
+========================= */
+
+function renderTimes(booked = []) {
+
   selectedTime = null;
-  selectedInfo.textContent = "Selecciona una hora";
+
+  selectedInfo.textContent =
+    "Selecciona una hora";
+
   reserveButton.disabled = true;
 
-  timesContainer.innerHTML =
-    '<div class="loading">Cargando horarios...</div>';
+  timesContainer.innerHTML = "";
 
-  try {
-    const response = await fetch(
-      `/api/appointments?date=${encodeURIComponent(dateInput.value)}`
-    );
 
-    if (!response.ok) {
-      throw new Error("No se pudieron cargar las citas");
+  times.forEach(time => {
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+
+    button.className = "time";
+
+    button.textContent =
+      formatTime(time);
+
+
+    if (booked.includes(time)) {
+
+      button.classList.add("disabled");
+
+      button.disabled = true;
+
+    } else {
+
+      button.addEventListener(
+        "click",
+        function() {
+
+          selectTime(
+            time,
+            button
+          );
+
+        }
+      );
+
     }
 
-    const data = await response.json();
 
-    const booked = data.appointments.map(
-      appointment => appointment.appointment_time
-    );
+    timesContainer.appendChild(button);
 
-    timesContainer.innerHTML = "";
-
-    times.forEach(time => {
-      const button = document.createElement("button");
-
-      button.className = "time";
-      button.textContent = formatTime(time);
-
-      if (booked.includes(time)) {
-        button.classList.add("disabled");
-        button.disabled = true;
-      } else {
-        button.addEventListener("click", () => selectTime(time, button));
-      }
-
-      timesContainer.appendChild(button);
-    });
-
-  } catch (error) {
-    timesContainer.innerHTML =
-      '<div class="loading">No se pudieron cargar los horarios. Intenta nuevamente.</div>';
-  }
-}
-
-function selectTime(time, button) {
-  document.querySelectorAll(".time").forEach(btn => {
-    btn.classList.remove("selected");
   });
 
-  button.classList.add("selected");
+}
+
+
+/* =========================
+   SELECCIONAR HORA
+========================= */
+
+function selectTime(time, button) {
+
+  document
+    .querySelectorAll(".time")
+    .forEach(btn => {
+
+      btn.classList.remove(
+        "selected"
+      );
+
+    });
+
+
+  button.classList.add(
+    "selected"
+  );
+
 
   selectedTime = time;
+
 
   selectedInfo.textContent =
     `Hora seleccionada: ${formatTime(time)}`;
 
+
   validateForm();
+
 }
+
+
+/* =========================
+   VALIDAR FORMULARIO
+========================= */
 
 function validateForm() {
-  reserveButton.disabled = !(
-    selectedTime &&
-    nameInput.value.trim() &&
-    phoneInput.value.trim()
-  );
+
+  const valid =
+
+    selectedTime !== null &&
+
+    nameInput.value.trim() !== "" &&
+
+    phoneInput.value.trim() !== "";
+
+
+  reserveButton.disabled =
+    !valid;
+
 }
 
-async function reserveAppointment() {
-  if (!selectedTime) return;
 
-  reserveButton.disabled = true;
-  reserveButton.textContent = "Reservando...";
-  message.className = "message";
-  message.style.display = "none";
+/* =========================
+   CONSULTAR CITAS
+========================= */
+
+async function loadAppointments() {
+
+  /*
+    Primero mostramos TODAS
+    las horas.
+
+    Esto significa que aunque
+    la API tenga un problema,
+    las horas seguirán apareciendo.
+  */
+
+  renderTimes([]);
+
 
   try {
-    const response = await fetch("/api/appointments", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        date: dateInput.value,
-        time: selectedTime,
-        name: nameInput.value.trim(),
-        phone: phoneInput.value.trim()
-      })
-    });
 
-    const data = await response.json();
+    const response =
+      await fetch(
+        `/api/appointments?date=${encodeURIComponent(dateInput.value)}`
+      );
+
 
     if (!response.ok) {
-      throw new Error(data.error || "No se pudo reservar");
+
+      console.log(
+        "API respondió:",
+        response.status
+      );
+
+      return;
+
     }
 
-    message.textContent =
-      `¡Cita reservada! ${formatTime(selectedTime)}.`;
 
-    message.className = "message success";
+    const data =
+      await response.json();
+
+
+    const booked =
+      (data.appointments || [])
+        .map(
+          appointment =>
+            appointment.appointment_time
+        );
+
+
+    /*
+      Volvemos a dibujar los horarios,
+      esta vez bloqueando los ocupados.
+    */
+
+    renderTimes(booked);
+
+
+  } catch (error) {
+
+    /*
+      Si la API falla,
+      dejamos las 11 horas disponibles.
+    */
+
+    console.log(
+      "API no disponible:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================
+   RESERVAR CITA
+========================= */
+
+async function reserveAppointment() {
+
+  if (!selectedTime) {
+    return;
+  }
+
+
+  reserveButton.disabled = true;
+
+  reserveButton.textContent =
+    "Reservando...";
+
+
+  message.className =
+    "message";
+
+  message.style.display =
+    "none";
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/appointments",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            date:
+              dateInput.value,
+
+            time:
+              selectedTime,
+
+            name:
+              nameInput.value.trim(),
+
+            phone:
+              phoneInput.value.trim()
+
+          })
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "No se pudo reservar"
+      );
+
+    }
+
+
+    message.textContent =
+      `¡Cita reservada correctamente para las ${formatTime(selectedTime)}!`;
+
+
+    message.className =
+      "message success";
+
 
     nameInput.value = "";
+
     phoneInput.value = "";
 
+
     await loadAppointments();
+
 
   } catch (error) {
 
     message.textContent =
-      error.message || "Ocurrió un error. Intenta nuevamente.";
+      error.message ||
+      "Ocurrió un error. Intenta nuevamente.";
 
-    message.className = "message error";
+
+    message.className =
+      "message error";
+
+
+    /*
+      Volvemos a consultar
+      por si otro cliente
+      reservó el horario.
+    */
 
     await loadAppointments();
 
-  } finally {
-    reserveButton.textContent = "Reservar cita";
-    validateForm();
   }
+
+
+  reserveButton.textContent =
+    "Reservar cita";
+
+
+  validateForm();
+
 }
 
-dateInput.addEventListener("change", loadAppointments);
 
-nameInput.addEventListener("input", validateForm);
-phoneInput.addEventListener("input", validateForm);
+/* =========================
+   EVENTOS
+========================= */
 
-reserveButton.addEventListener("click", reserveAppointment);
+dateInput.addEventListener(
+  "change",
+  loadAppointments
+);
+
+
+nameInput.addEventListener(
+  "input",
+  validateForm
+);
+
+
+phoneInput.addEventListener(
+  "input",
+  validateForm
+);
+
+
+reserveButton.addEventListener(
+  "click",
+  reserveAppointment
+);
+
+
+/* =========================
+   INICIAR
+========================= */
+
+renderTimes([]);
 
 loadAppointments();
+
 </script>
 
 </body>
