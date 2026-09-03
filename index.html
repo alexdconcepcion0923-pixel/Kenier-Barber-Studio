@@ -70,6 +70,11 @@ input {
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.time:active {
+  transform: scale(.97);
 }
 
 .time.selected {
@@ -117,7 +122,8 @@ button.reserve:disabled {
   border-radius: 10px;
   text-align: center;
   font-weight: bold;
-  line-height: 1.5;
+  line-height: 1.6;
+  white-space: pre-line;
 }
 
 .message.success {
@@ -141,6 +147,7 @@ button.reserve:disabled {
 <body>
 
 <div class="container">
+
   <div class="card">
 
     <h1>Kenier Barber Studio</h1>
@@ -182,6 +189,7 @@ button.reserve:disabled {
       type="text"
       id="name"
       placeholder="Nombre completo"
+      autocomplete="name"
     >
 
     <label for="phone">
@@ -192,6 +200,7 @@ button.reserve:disabled {
       type="tel"
       id="phone"
       placeholder="Número de teléfono"
+      autocomplete="tel"
     >
 
     <button
@@ -208,6 +217,7 @@ button.reserve:disabled {
     ></div>
 
   </div>
+
 </div>
 
 
@@ -253,7 +263,9 @@ const message =
 let selectedTime = null;
 
 
-/* FECHA DE HOY */
+/* =========================
+   FECHA ACTUAL
+========================= */
 
 function getToday() {
 
@@ -279,7 +291,9 @@ dateInput.min = getToday();
 dateInput.value = getToday();
 
 
-/* FORMATO DE HORA */
+/* =========================
+   FORMATO DE HORA
+========================= */
 
 function formatTime(time) {
 
@@ -298,7 +312,9 @@ function formatTime(time) {
 }
 
 
-/* MOSTRAR HORARIOS */
+/* =========================
+   MOSTRAR HORARIOS
+========================= */
 
 function renderTimes(booked = []) {
 
@@ -335,7 +351,7 @@ function renderTimes(booked = []) {
 
       button.addEventListener(
         "click",
-        () => {
+        function() {
 
           selectTime(
             time,
@@ -347,6 +363,7 @@ function renderTimes(booked = []) {
 
     }
 
+
     timesContainer.appendChild(button);
 
   });
@@ -354,7 +371,9 @@ function renderTimes(booked = []) {
 }
 
 
-/* SELECCIONAR HORA */
+/* =========================
+   SELECCIONAR HORA
+========================= */
 
 function selectTime(time, button) {
 
@@ -386,7 +405,9 @@ function selectTime(time, button) {
 }
 
 
-/* VALIDAR */
+/* =========================
+   VALIDAR FORMULARIO
+========================= */
 
 function validateForm() {
 
@@ -395,13 +416,16 @@ function validateForm() {
     nameInput.value.trim() !== "" &&
     phoneInput.value.trim() !== "";
 
+
   reserveButton.disabled =
     !valid;
 
 }
 
 
-/* CARGAR CITAS */
+/* =========================
+   CARGAR CITAS
+========================= */
 
 async function loadAppointments() {
 
@@ -417,7 +441,14 @@ async function loadAppointments() {
 
 
     if (!response.ok) {
+
+      console.log(
+        "Error API:",
+        response.status
+      );
+
       return;
+
     }
 
 
@@ -435,6 +466,7 @@ async function loadAppointments() {
 
     renderTimes(booked);
 
+
   } catch (error) {
 
     console.log(
@@ -447,7 +479,9 @@ async function loadAppointments() {
 }
 
 
-/* MOSTRAR MENSAJE */
+/* =========================
+   MOSTRAR MENSAJE
+========================= */
 
 function showMessage(text, type) {
 
@@ -459,7 +493,9 @@ function showMessage(text, type) {
 }
 
 
-/* RESERVAR */
+/* =========================
+   RESERVAR CITA
+========================= */
 
 async function reserveAppointment() {
 
@@ -485,6 +521,19 @@ async function reserveAppointment() {
     "";
 
 
+  const customerName =
+    nameInput.value.trim();
+
+  const customerPhone =
+    phoneInput.value.trim();
+
+  const selectedDate =
+    dateInput.value;
+
+  const selectedHour =
+    selectedTime;
+
+
   try {
 
     const response =
@@ -501,16 +550,16 @@ async function reserveAppointment() {
           body: JSON.stringify({
 
             date:
-              dateInput.value,
+              selectedDate,
 
             time:
-              selectedTime,
+              selectedHour,
 
             name:
-              nameInput.value.trim(),
+              customerName,
 
             phone:
-              phoneInput.value.trim()
+              customerPhone
 
           })
 
@@ -532,16 +581,20 @@ async function reserveAppointment() {
     }
 
 
-    /*
-      CITA CONFIRMADA
-    */
-
-    const bookedTime =
-      formatTime(selectedTime);
-
+    /* =========================
+       CONFIRMACIÓN
+    ========================= */
 
     showMessage(
-      `✅ ¡Cita reservada correctamente!<br>📅 ${dateInput.value}<br>🕐 ${bookedTime}<br>👤 ${nameInput.value.trim()}`,
+      `✅ ¡Cita reservada correctamente!
+
+📅 Fecha: ${selectedDate}
+
+🕐 Hora: ${formatTime(selectedHour)}
+
+👤 Cliente: ${customerName}
+
+📱 Teléfono: ${customerPhone}`,
       "success"
     );
 
@@ -550,16 +603,15 @@ async function reserveAppointment() {
 
     phoneInput.value = "";
 
-
     selectedTime = null;
-
 
     selectedInfo.textContent =
       "Cita confirmada";
 
 
     /*
-      Actualizar horarios
+      Actualizamos los horarios
+      para bloquear la cita recién creada.
     */
 
     await loadAppointments();
@@ -587,11 +639,20 @@ async function reserveAppointment() {
 }
 
 
-/* EVENTOS */
+/* =========================
+   EVENTOS
+========================= */
 
 dateInput.addEventListener(
   "change",
-  loadAppointments
+  function() {
+
+    message.className =
+      "hidden";
+
+    loadAppointments();
+
+  }
 );
 
 
@@ -613,7 +674,9 @@ reserveButton.addEventListener(
 );
 
 
-/* INICIAR */
+/* =========================
+   INICIAR
+========================= */
 
 renderTimes([]);
 
