@@ -29,16 +29,11 @@
       margin-bottom: 25px;
     }
 
-    .login-box,
     .admin-box {
       background: white;
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
-
-    .admin-box {
-      display: none;
     }
 
     input,
@@ -66,21 +61,8 @@
       opacity: 0.9;
     }
 
-    .logout {
-      background: #777;
+    .refresh {
       margin-bottom: 20px;
-    }
-
-    .error {
-      color: #d00;
-      margin-top: 12px;
-      text-align: center;
-    }
-
-    .success {
-      color: green;
-      margin-top: 12px;
-      text-align: center;
     }
 
     .date-title {
@@ -119,6 +101,12 @@
       text-align: center;
       margin: 15px 0;
     }
+
+    .error {
+      color: #d00;
+      text-align: center;
+      padding: 15px;
+    }
   </style>
 </head>
 
@@ -128,33 +116,7 @@
 
   <h1>Kenier Barber Studio</h1>
 
-  <!-- LOGIN -->
-  <div class="login-box" id="loginBox">
-
-    <h2>Panel de administrador</h2>
-
-    <input
-      type="password"
-      id="password"
-      placeholder="Contraseña"
-      autocomplete="current-password"
-    >
-
-    <button onclick="login()">
-      Entrar
-    </button>
-
-    <div id="loginMessage"></div>
-
-  </div>
-
-
-  <!-- ADMIN -->
-  <div class="admin-box" id="adminBox">
-
-    <button class="logout" onclick="logout()">
-      Cerrar sesión
-    </button>
+  <div class="admin-box">
 
     <label for="date">
       <strong>Seleccionar fecha</strong>
@@ -165,6 +127,13 @@
       id="date"
       onchange="loadAppointments()"
     >
+
+    <button
+      class="refresh"
+      onclick="loadAppointments()"
+    >
+      Actualizar citas
+    </button>
 
     <div class="summary" id="summary">
       Cargando...
@@ -179,73 +148,178 @@
 
 <script>
 
-  const loginBox = document.getElementById("loginBox");
-  const adminBox = document.getElementById("adminBox");
-  const loginMessage = document.getElementById("loginMessage");
-  const passwordInput = document.getElementById("password");
+const dateInput =
+  document.getElementById("date");
 
-  const dateInput = document.getElementById("date");
-  const appointmentsContainer =
-    document.getElementById("appointments");
+const appointmentsContainer =
+  document.getElementById("appointments");
 
-  const summary =
-    document.getElementById("summary");
+const summary =
+  document.getElementById("summary");
 
 
-  // FECHA DE HOY
-  const today = new Date();
+// FECHA DE HOY
+const today = new Date();
 
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
+const year =
+  today.getFullYear();
 
-  const todayString = `${year}-${month}-${day}`;
+const month =
+  String(today.getMonth() + 1)
+    .padStart(2, "0");
 
-  dateInput.value = todayString;
-  dateInput.min = todayString;
+const day =
+  String(today.getDate())
+    .padStart(2, "0");
+
+const todayString =
+  `${year}-${month}-${day}`;
+
+dateInput.value =
+  todayString;
+
+dateInput.min =
+  todayString;
 
 
-  // VERIFICAR SESIÓN
-  function checkLogin() {
+// CARGAR CITAS
+async function loadAppointments() {
 
-    if (
-      document.cookie.includes(
-        "admin_auth=authenticated"
-      )
-    ) {
+  const date =
+    dateInput.value;
 
-      loginBox.style.display = "none";
-      adminBox.style.display = "block";
+  if (!date) return;
 
-      loadAppointments();
+  appointmentsContainer.innerHTML =
+    "<p>Cargando citas...</p>";
 
+  try {
+
+    const response =
+      await fetch(
+        `/api/appointments?date=${date}`
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      appointmentsContainer.innerHTML =
+        `<div class="error">
+          ${data.error || "Error cargando citas."}
+        </div>`;
+
+      return;
     }
+
+    const appointments =
+      data.appointments || [];
+
+    summary.textContent =
+      `${appointments.length} cita${
+        appointments.length === 1
+          ? ""
+          : "s"
+      } para este día`;
+
+    appointmentsContainer.innerHTML =
+      "";
+
+    if (appointments.length === 0) {
+
+      appointmentsContainer.innerHTML =
+        `<div class="empty">
+          No hay citas reservadas para este día.
+        </div>`;
+
+      return;
+    }
+
+    appointments.forEach(
+      appointment => {
+
+        const div =
+          document.createElement("div");
+
+        div.className =
+          "appointment";
+
+        div.innerHTML = `
+
+          <strong>
+            ${formatTime(
+              appointment.appointment_time
+            )}
+          </strong>
+
+          <br><br>
+
+          <strong>Cliente:</strong>
+          ${escapeHtml(
+            appointment.client_name
+          )}
+
+          <br>
+
+          <strong>Teléfono:</strong>
+          ${escapeHtml(
+            appointment.client_phone
+          )}
+
+          <br>
+
+          <strong>Estado:</strong>
+          ${escapeHtml(
+            appointment.status
+          )}
+
+          <button
+            class="cancel"
+            onclick="cancelAppointment(
+              ${appointment.id}
+            )"
+          >
+            Cancelar cita
+          </button>
+
+        `;
+
+        appointmentsContainer
+          .appendChild(div);
+
+      }
+    );
+
+  } catch (error) {
+
+    appointmentsContainer.innerHTML =
+      `<div class="error">
+        Error conectando con el servidor.
+      </div>`;
 
   }
 
-
-  // LOGIN
-  async function login() {
-
-    const password =
-      passwordInput.value.trim();
-
-    if (!password) {
-
-      loginMessage.innerHTML =
-        '<div class="error">Escribe la contraseña.</div>';
-
-      return;
-
-    }
+}
 
 
-    try {
+// CANCELAR CITA
+async function cancelAppointment(id) {
 
-      const response = await fetch(
-        "/api/admin-login",
+  const confirmCancel =
+    confirm(
+      "¿Seguro que quieres cancelar esta cita?"
+    );
+
+  if (!confirmCancel) return;
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/appointments",
         {
-          method: "POST",
+          method: "DELETE",
 
           headers: {
             "Content-Type":
@@ -253,283 +327,77 @@
           },
 
           body: JSON.stringify({
-            password: password
+            id: id
           })
         }
       );
 
+    const data =
+      await response.json();
 
-      const data =
-        await response.json();
-
-
-      if (!response.ok) {
-
-        loginMessage.innerHTML =
-          `<div class="error">${data.error || "Contraseña incorrecta."}</div>`;
-
-        return;
-
-      }
-
-
-      loginBox.style.display = "none";
-      adminBox.style.display = "block";
-
-      passwordInput.value = "";
-
-      loadAppointments();
-
-
-    } catch (error) {
-
-      loginMessage.innerHTML =
-        '<div class="error">No se pudo conectar con el servidor.</div>';
-
-    }
-
-  }
-
-
-  // ENTER PARA LOGIN
-  passwordInput.addEventListener(
-    "keydown",
-    function(event) {
-
-      if (event.key === "Enter") {
-        login();
-      }
-
-    }
-  );
-
-
-  // CARGAR CITAS
-  async function loadAppointments() {
-
-    const date =
-      dateInput.value;
-
-    if (!date) return;
-
-
-    appointmentsContainer.innerHTML =
-      "<p>Cargando citas...</p>";
-
-
-    try {
-
-      const response =
-        await fetch(
-          `/api/appointments?date=${date}`
-        );
-
-
-      const data =
-        await response.json();
-
-
-      if (!response.ok) {
-
-        appointmentsContainer.innerHTML =
-          `<div class="error">${data.error || "Error cargando citas."}</div>`;
-
-        return;
-
-      }
-
-
-      const appointments =
-        data.appointments || [];
-
-
-      summary.textContent =
-        `${appointments.length} cita${appointments.length === 1 ? "" : "s"} para este día`;
-
-
-      appointmentsContainer.innerHTML = "";
-
-
-      if (appointments.length === 0) {
-
-        appointmentsContainer.innerHTML =
-          '<div class="empty">No hay citas reservadas para este día.</div>';
-
-        return;
-
-      }
-
-
-      appointments.forEach(
-        appointment => {
-
-          const div =
-            document.createElement("div");
-
-          div.className =
-            "appointment";
-
-
-          div.innerHTML = `
-
-            <strong>
-              ${formatTime(appointment.appointment_time)}
-            </strong>
-
-            <br><br>
-
-            <strong>Cliente:</strong>
-            ${escapeHtml(appointment.client_name)}
-
-            <br>
-
-            <strong>Teléfono:</strong>
-            ${escapeHtml(appointment.client_phone)}
-
-            <br>
-
-            <strong>Estado:</strong>
-            ${escapeHtml(appointment.status)}
-
-            <button
-              class="cancel"
-              onclick="cancelAppointment(${appointment.id})"
-            >
-              Cancelar cita
-            </button>
-
-          `;
-
-
-          appointmentsContainer.appendChild(div);
-
-        }
-      );
-
-
-    } catch (error) {
-
-      appointmentsContainer.innerHTML =
-        '<div class="error">Error conectando con el servidor.</div>';
-
-    }
-
-  }
-
-
-  // CANCELAR CITA
-  async function cancelAppointment(id) {
-
-    const confirmCancel =
-      confirm(
-        "¿Seguro que quieres cancelar esta cita?"
-      );
-
-
-    if (!confirmCancel) return;
-
-
-    try {
-
-      const response =
-        await fetch(
-          "/api/appointments",
-          {
-            method: "DELETE",
-
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-
-            body: JSON.stringify({
-              id: id
-            })
-          }
-        );
-
-
-      const data =
-        await response.json();
-
-
-      if (!response.ok) {
-
-        alert(
-          data.error ||
-          "No se pudo cancelar la cita."
-        );
-
-        return;
-
-      }
-
+    if (!response.ok) {
 
       alert(
-        "Cita cancelada correctamente."
+        data.error ||
+        "No se pudo cancelar la cita."
       );
 
-
-      loadAppointments();
-
-
-    } catch (error) {
-
-      alert(
-        "No se pudo conectar con el servidor."
-      );
-
+      return;
     }
 
-  }
+    alert(
+      "Cita cancelada correctamente."
+    );
 
+    loadAppointments();
 
-  // FORMATO DE HORA
-  function formatTime(time) {
+  } catch (error) {
 
-    const [hour, minute] =
-      time.split(":");
-
-    let h = parseInt(hour);
-
-    const ampm =
-      h >= 12 ? "PM" : "AM";
-
-    h =
-      h % 12 || 12;
-
-    return `${h}:${minute} ${ampm}`;
+    alert(
+      "No se pudo conectar con el servidor."
+    );
 
   }
 
-
-  // SEGURIDAD HTML
-  function escapeHtml(text) {
-
-    const div =
-      document.createElement("div");
-
-    div.textContent =
-      text;
-
-    return div.innerHTML;
-
-  }
+}
 
 
-  // CERRAR SESIÓN
-  function logout() {
+// FORMATO DE HORA
+function formatTime(time) {
 
-    document.cookie =
-      "admin_auth=; Path=/; Max-Age=0";
+  const [hour, minute] =
+    time.split(":");
 
-    adminBox.style.display = "none";
-    loginBox.style.display = "block";
+  let h =
+    parseInt(hour);
 
-  }
+  const ampm =
+    h >= 12
+      ? "PM"
+      : "AM";
+
+  h =
+    h % 12 || 12;
+
+  return `${h}:${minute} ${ampm}`;
+}
 
 
-  checkLogin();
+// PROTEGER TEXTO
+function escapeHtml(text) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+}
+
+
+// CARGAR AUTOMÁTICAMENTE
+loadAppointments();
 
 </script>
 
